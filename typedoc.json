@@ -1,0 +1,18 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "plugin": [
+    "typedoc-github-theme"
+  ],
+  "name": "AIDC Toolkit",
+  "entryPoints": [
+    "../core",
+    "../utility",
+    "../gs1"
+  ],
+  "entryPointStrategy": "packages",
+  "includeVersion": true,
+  "out": "api",
+  "theme": "typedoc-github-theme",
+  "sourceLinkExternal": true,
+  "titleLink": "https://github.com/aidc-toolkit"
+}

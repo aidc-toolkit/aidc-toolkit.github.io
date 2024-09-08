@@ -1,0 +1,27 @@
+{
+  "name": "@aidc-toolkit/doc",
+  "version": "0.0.1",
+  "description": "Documentation for AIDC Toolkit",
+  "type": "module",
+  "private": true,
+  "homepage": "https://github.com/aidc-toolkit",
+  "repository": "github:aidc-toolkit/doc",
+  "bugs": {
+    "url": "https://github.com/aidc-toolkit/doc/issues"
+  },
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Kevin Dean",
+    "email": "Kevin.Dean@datadevelopment.com",
+    "url": "https://www.linkedin.com/in/kdean"
+  },
+  "scripts": {
+    "build": "rimraf api resource demo && typedoc && copy-files-from-to"
+  },
+  "devDependencies": {
+    "copy-files-from-to": "^3.11.0",
+    "rimraf": "^6.0.1",
+    "typedoc": "^0.26.6",
+    "typedoc-github-theme": "^0.1.2"
+  }
+}
