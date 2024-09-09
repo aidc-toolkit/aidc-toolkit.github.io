@@ -36,7 +36,7 @@ on [GitHub](https://github.com/aidc-toolkit).
         </td>
     </tr>
     <tr>
-        <td>1.3.0</td>
+        <td>1.2.0</td>
         <td>2025Q1</td>
         <td>
             <list type="bullet">
