@@ -8,8 +8,5 @@
       "from": "../demo/dist/**/*",
       "to": "demo/"
     }
-  ],
-  "copyFilesSettings": {
-    "whenFileExists": "overwrite"
-  }
+  ]
 }
