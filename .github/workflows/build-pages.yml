@@ -1,0 +1,147 @@
+name: Build GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  pages: write
+
+env:
+  NODE_VERSION: 22
+  INSTANCE: "Writerside/doc"
+  ARTIFACT: "webHelpDOC2-all.zip"
+  DOCKER_VERSION: "242.21870"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+#      # Insert this at the appropriate step to start a terminal session for debugging.
+#      - name: Setup tmate session
+#        uses: mxschmitt/action-tmate@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: https://registry.npmjs.org/
+
+      - name: Checkout default repository (doc)
+        uses: actions/checkout@v4
+
+      - name: Build Writerside artifact
+        uses: JetBrains/writerside-github-action@v4
+        with:
+          instance: ${{ env.INSTANCE }}
+          artifact: ${{ env.ARTIFACT }}
+          docker-version: ${{ env.DOCKER_VERSION }}
+
+      - name: Create build directory
+        run: mkdir build
+
+      - name: Unzip artifact to pages
+        run: unzip -O UTF-8 -qq artifacts/${{ env.ARTIFACT }} -d build/pages
+
+      # Builds include "npm install @rollup/rollup-linux-x64-gnu", which is necessary to work around platform-specific
+      # optional dependencies bug (https://github.com/npm/cli/issues/4828).
+
+      - name: Checkout dev
+        uses: actions/checkout@v4
+        with:
+          repository: aidc-toolkit/dev
+          path: build/dev
+
+      - name: Build dev
+        working-directory: "build/dev"
+        run: |
+          npm link
+          npm ci
+          npm install @rollup/rollup-linux-x64-gnu
+          npm run build
+
+      - name: Checkout core
+        uses: actions/checkout@v4
+        with:
+          repository: aidc-toolkit/core
+          path: build/core
+
+      - name: Build core
+        working-directory: "build/core"
+        run: |
+          npm link
+          npm link @aidc-toolkit/dev
+          npm ci
+          npm install @rollup/rollup-linux-x64-gnu
+          npm run build-dev
+
+      - name: Checkout utility
+        uses: actions/checkout@v4
+        with:
+          repository: aidc-toolkit/utility
+          path: build/utility
+
+      - name: Build utility
+        working-directory: "build/utility"
+        run: |
+          npm link
+          npm link @aidc-toolkit/dev @aidc-toolkit/core
+          npm ci
+          npm install @rollup/rollup-linux-x64-gnu
+          npm run build-dev
+
+      - name: Checkout gs1
+        uses: actions/checkout@v4
+        with:
+          repository: aidc-toolkit/gs1
+          path: build/gs1
+
+      - name: Build gs1
+        working-directory: "build/gs1"
+        run: |
+          npm link
+          npm link @aidc-toolkit/dev @aidc-toolkit/core @aidc-toolkit/utility
+          npm ci
+          npm install @rollup/rollup-linux-x64-gnu
+          npm run build-dev
+
+      - name: Checkout demo
+        uses: actions/checkout@v4
+        with:
+          repository: aidc-toolkit/demo
+          path: build/demo
+
+      - name: Build demo
+        working-directory: "build/demo"
+        run: |
+          npm link @aidc-toolkit/dev @aidc-toolkit/core @aidc-toolkit/utility @aidc-toolkit/gs1
+          npm ci
+          npm install @rollup/rollup-linux-x64-gnu
+          npm run build -- --outDir ../pages/demo
+
+      - name: Checkout doc
+        uses: actions/checkout@v4
+        with:
+          path: build/doc
+
+      - name: Generate API documentation
+        working-directory: "build/doc"
+        run: |
+          npm link @aidc-toolkit/dev
+          npm ci
+          npm install @rollup/rollup-linux-x64-gnu
+          npm run typedoc -- --out ../pages/api
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Package and upload pages directory
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/pages
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

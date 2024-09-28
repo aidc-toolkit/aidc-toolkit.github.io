@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE vars SYSTEM "https://resources.jetbrains.com/writerside/1.0/vars.dtd">
+<vars>
+    <var name="product" value="AIDC Toolkit" />
+    <var name="gitHubBase" value="https://github.com/aidc-toolkit" />
+    <var name="demoBase" value="https://aidc-toolkit.github.io/demo" />
+    <var name="apiBase" value="https://aidc-toolkit.github.io/api" />
+    <var name="jsBase" value="https://developer.mozilla.org/en-US/docs/Web/JavaScript" />
+    <var name="tsHandbookBase" value="https://www.typescriptlang.org/docs/handbook" />
+</vars>

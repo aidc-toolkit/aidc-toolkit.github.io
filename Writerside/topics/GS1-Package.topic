@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="GS1 Package" id="GS1-Package">
+    <chapter title="Check digits and check character pairs" id="check-digits-and-check-character-pairs">
+        <chapter title="Check digit - GS1 identification key" id="check-digit-gs1-identification-key">
+        </chapter>
+        <chapter title="Check digit - price/weight encoding" id="check-digit-price-weight-encoding">
+        </chapter>
+        <chapter title="Check character pair - GS1 identification key" id="check-character-pair-gs1-identification-key">
+        </chapter>
+    </chapter>
+    <chapter title="GS1 identification keys" id="gs1-identification-keys">
+        <chapter title="Prefix types" id="prefix=types">
+        </chapter>
+        <chapter title="GS1 identification key validation" id="gs1-identification-key-validation">
+        </chapter>
+        <chapter title="GS1 identification key creation" id="gs1-identification-key-creation">
+        </chapter>
+    </chapter>
+</topic>

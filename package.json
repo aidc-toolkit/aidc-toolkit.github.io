@@ -16,7 +16,8 @@
     "url": "https://www.linkedin.com/in/kdean"
   },
   "scripts": {
-    "build": "typedoc && rimraf resource demo && copy-files-from-to"
+    "copy": "copy-files-from-to",
+    "typedoc": "typedoc"
   },
   "devDependencies": {
     "@aidc-toolkit/dev": "^0.9.1",

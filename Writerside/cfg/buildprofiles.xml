@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE buildprofiles SYSTEM "https://resources.jetbrains.com/writerside/1.0/build-profiles.dtd">
+<buildprofiles xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/build-profiles.xsd"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <build-profile instance="doc">
+        <variables>
+            <noindex-content>false</noindex-content>
+            <custom-favicons>icon-144.png</custom-favicons>
+            <header-logo>icon-144.png</header-logo>
+            <download-title>Join us on GitHub</download-title>
+            <download-page>https://github.com/aidc-toolkit</download-page>
+            <showDownloadButton>true</showDownloadButton>
+        </variables>
+    </build-profile>
+
+</buildprofiles>
