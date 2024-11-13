@@ -56,20 +56,34 @@ jobs:
           path: dev
 
       - name: Build dev
-        working-directory: dev
-        run: |
-          npm link
-          npm ci
-          npm install @rollup/rollup-linux-x64-gnu
-          npm run build-doc
+        uses: ./.github/actions/build-project-doc
+        with:
+          project: dev
+          link: true
+          link_projects: ""
 
       - name: Build core
         uses: ./.github/actions/build-project-doc
         with:
           project: core
           link: true
-          linked-projects: dev
+          link_projects: dev
 
+      - name: Build utility
+        uses: ./.github/actions/build-project-doc
+        with:
+          project: utility
+          link: true
+          link_projects: dev core
+
+#      - name: Build dev
+#        working-directory: dev
+#        run: |
+#          npm link
+#          npm ci
+#          npm install @rollup/rollup-linux-x64-gnu
+#          npm run build-doc
+#
 #      - name: Checkout core
 #        uses: actions/checkout@v4
 #        with:

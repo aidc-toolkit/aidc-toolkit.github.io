@@ -7,8 +7,8 @@ inputs:
   link:
     required: true
     type: boolean
-  linked-projects:
-    required: false
+  link_projects:
+    required: true
     type: string
 
 runs:
@@ -20,18 +20,18 @@ runs:
         repository: aidc-toolkit/${{ inputs.project }}
         path: ${{ inputs.project }}
 
-    - name: Start terminal session
-      uses: mxschmitt/action-tmate@v3
-
     - name: Build ${{ inputs.project }}
       shell: bash
       working-directory: ${{ inputs.project }}
       run: |
-        npm link
-        npm link @aidc-toolkit/dev
+        if [ "${{ inputs.link }}" = "true" ]
+        then
+          npm link
+        fi
+        for link_project in ${{ inputs.link_projects }}
+        do
+          npm link @aidc-toolkit/$link_project
+        done
         npm ci
         npm install @rollup/rollup-linux-x64-gnu
         npm run build-doc
-
-    - name: Start terminal session
-      uses: mxschmitt/action-tmate@v3
