@@ -12,7 +12,7 @@ permissions:
 env:
   NODE_VERSION: 22
   WRITERSIDE_INSTANCE: "Writerside/doc"
-  WRITERSIDE_ARTIFACT: "doc.zip"
+  WRITERSIDE_ARTIFACT: "webHelpDOC2-all"
   WRITERSIDE_DOCKER_VERSION: "243.21565"
 
 jobs:
@@ -39,11 +39,18 @@ jobs:
           artifact: ${{ env.WRITERSIDE_ARTIFACT }}
           docker-version: ${{ env.WRITERSIDE_DOCKER_VERSION }}
 
+      - name: Move all to doc directory
+        working-directory: dev
+        run: |
+          shopt -s extglob
+          mkdir doc
+          mv .[^.]* !(doc) doc/
+
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
 
       - name: Unzip artifact to pages
-        run: unzip -O UTF-8 -qq artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
+        run: unzip -O UTF-8 -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
 
       # Builds include "npm install @rollup/rollup-linux-x64-gnu", which is necessary to work around platform-specific
       # optional dependencies bug (https://github.com/npm/cli/issues/4828).
@@ -120,11 +127,6 @@ jobs:
           npm ci
           npm install @rollup/rollup-linux-x64-gnu
           npm run build -- --outDir ../pages/demo
-
-      - name: Checkout doc
-        uses: actions/checkout@v4
-        with:
-          path: doc
 
       - name: Generate API documentation
         working-directory: doc
