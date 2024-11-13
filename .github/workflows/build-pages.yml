@@ -46,7 +46,7 @@ jobs:
         run: |
           shopt -s extglob
           mkdir doc
-          mv .!(.|github) !(doc) doc/
+          mv .!(|.|github) !(doc) doc/
 #          unzip -O UTF-8 -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
 
       # Builds include "npm install @rollup/rollup-linux-x64-gnu", which is necessary to work around platform-specific
