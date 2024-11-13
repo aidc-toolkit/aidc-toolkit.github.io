@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 #      # Insert this at the appropriate step to start a terminal session for debugging.
-#      - name: Setup tmate session
+#      - name: Start terminal session
 #        uses: mxschmitt/action-tmate@v3
 
       - name: Setup node
@@ -39,17 +39,12 @@ jobs:
           artifact: ${{ env.WRITERSIDE_ARTIFACT }}
           docker-version: ${{ env.WRITERSIDE_DOCKER_VERSION }}
 
-      - name: Move all to doc directory
+      - name: Move all to doc directory and unzip artifact to pages
         run: |
           shopt -s extglob
           mkdir doc
           mv .[^.]* !(doc) doc/
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-
-      - name: Unzip artifact to pages
-        run: unzip -O UTF-8 -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
+          unzip -O UTF-8 -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
 
       # Builds include "npm install @rollup/rollup-linux-x64-gnu", which is necessary to work around platform-specific
       # optional dependencies bug (https://github.com/npm/cli/issues/4828).
@@ -66,22 +61,29 @@ jobs:
           npm link
           npm ci
           npm install @rollup/rollup-linux-x64-gnu
-          npm run build
+          npm run build-doc
 
-      - name: Checkout core
-        uses: actions/checkout@v4
+      - name: Build project doc (core)
+        uses: ./.github/workflows/build-project-doc.yml
         with:
-          repository: aidc-toolkit/core
-          path: core
+          project: code
+          link: true
+          linked-projects: dev
 
-      - name: Build core
-        working-directory: core
-        run: |
-          npm link
-          npm link @aidc-toolkit/dev
-          npm ci
-          npm install @rollup/rollup-linux-x64-gnu
-          npm run build-dev
+#      - name: Checkout core
+#        uses: actions/checkout@v4
+#        with:
+#          repository: aidc-toolkit/core
+#          path: core
+#
+#      - name: Build core
+#        working-directory: core
+#        run: |
+#          npm link
+#          npm link @aidc-toolkit/dev
+#          npm ci
+#          npm install @rollup/rollup-linux-x64-gnu
+#          npm run build-doc
 
       - name: Checkout utility
         uses: actions/checkout@v4
@@ -96,7 +98,7 @@ jobs:
           npm link @aidc-toolkit/dev @aidc-toolkit/core
           npm ci
           npm install @rollup/rollup-linux-x64-gnu
-          npm run build-dev
+          npm run build-doc
 
       - name: Checkout gs1
         uses: actions/checkout@v4
@@ -111,7 +113,7 @@ jobs:
           npm link @aidc-toolkit/dev @aidc-toolkit/core @aidc-toolkit/utility
           npm ci
           npm install @rollup/rollup-linux-x64-gnu
-          npm run build-dev
+          npm run build-doc
 
       - name: Checkout demo
         uses: actions/checkout@v4
