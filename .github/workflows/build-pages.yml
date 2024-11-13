@@ -39,7 +39,7 @@ jobs:
           artifact: ${{ env.WRITERSIDE_ARTIFACT }}
           docker-version: ${{ env.WRITERSIDE_DOCKER_VERSION }}
 
-      - name: Move all to doc directory and unzip artifact to pages
+      - name: Move all to doc directory and unzip artifact to pages directory
         run: |
           shopt -s extglob
           mkdir doc
@@ -63,27 +63,20 @@ jobs:
           npm install @rollup/rollup-linux-x64-gnu
           npm run build-doc
 
-      - name: Build project doc (core)
-        uses: ./.github/workflows/build-project-doc.yml
+      - name: Checkout core
+        uses: actions/checkout@v4
         with:
-          project: code
-          link: true
-          linked-projects: dev
+          repository: aidc-toolkit/core
+          path: core
 
-#      - name: Checkout core
-#        uses: actions/checkout@v4
-#        with:
-#          repository: aidc-toolkit/core
-#          path: core
-#
-#      - name: Build core
-#        working-directory: core
-#        run: |
-#          npm link
-#          npm link @aidc-toolkit/dev
-#          npm ci
-#          npm install @rollup/rollup-linux-x64-gnu
-#          npm run build-doc
+      - name: Build core
+        working-directory: core
+        run: |
+          npm link
+          npm link @aidc-toolkit/dev
+          npm ci
+          npm install @rollup/rollup-linux-x64-gnu
+          npm run build-doc
 
       - name: Checkout utility
         uses: actions/checkout@v4
@@ -127,7 +120,7 @@ jobs:
           npm link @aidc-toolkit/dev @aidc-toolkit/core @aidc-toolkit/utility @aidc-toolkit/gs1
           npm ci
           npm install @rollup/rollup-linux-x64-gnu
-          npm run build -- --outDir ../pages/demo
+          npm run build-doc -- --outDir ../pages/demo
 
       - name: Generate API documentation
         working-directory: doc
