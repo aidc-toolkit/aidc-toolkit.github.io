@@ -4,27 +4,33 @@ inputs:
   project:
     required: true
     type: string
-  link:
-    required: true
+  no_link:
+    required: false
     type: boolean
   link_projects:
-    required: true
+    required: false
+    type: string
+  build_parameters:
+    required: false
     type: string
 
 runs:
   using: composite
   steps:
     - name: Checkout ${{ inputs.project }}
+      if: ${{ inputs.project != 'doc' }}
       uses: actions/checkout@v4
       with:
         repository: aidc-toolkit/${{ inputs.project }}
         path: ${{ inputs.project }}
 
+    # Build includes "npm install @rollup/rollup-linux-x64-gnu", which is necessary to work around platform-specific
+    # optional dependencies bug (https://github.com/npm/cli/issues/4828).
     - name: Build ${{ inputs.project }}
       shell: bash
       working-directory: ${{ inputs.project }}
       run: |
-        if [ "${{ inputs.link }}" = "true" ]
+        if [ "${{ inputs.no_link }}" != "true" ]
         then
           npm link
         fi
@@ -34,4 +40,4 @@ runs:
         done
         npm ci
         npm install @rollup/rollup-linux-x64-gnu
-        npm run build-doc
+        npm run build-doc -- ${{ inputs.build_parameters }}

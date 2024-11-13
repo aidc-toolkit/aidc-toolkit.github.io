@@ -32,50 +32,64 @@ jobs:
       - name: Checkout default repository (doc)
         uses: actions/checkout@v4
 
-#      - name: Build Writerside artifact
-#        uses: JetBrains/writerside-github-action@v4
-#        with:
-#          instance: ${{ env.WRITERSIDE_INSTANCE }}
-#          artifact: ${{ env.WRITERSIDE_ARTIFACT }}
-#          docker-version: ${{ env.WRITERSIDE_DOCKER_VERSION }}
-#
+      - name: Build Writerside artifact
+        uses: JetBrains/writerside-github-action@v4
+        with:
+          instance: ${{ env.WRITERSIDE_INSTANCE }}
+          artifact: ${{ env.WRITERSIDE_ARTIFACT }}
+          docker-version: ${{ env.WRITERSIDE_DOCKER_VERSION }}
+
       - name: Move all except .github to doc directory and unzip artifact to pages directory
         run: |
           shopt -s extglob
           mkdir doc
           mv .!(|.|github) !(doc) doc/
-#          unzip -O UTF-8 -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
-
-      # Builds include "npm install @rollup/rollup-linux-x64-gnu", which is necessary to work around platform-specific
-      # optional dependencies bug (https://github.com/npm/cli/issues/4828).
-
-      - name: Checkout dev
-        uses: actions/checkout@v4
-        with:
-          repository: aidc-toolkit/dev
-          path: dev
+          unzip -O UTF-8 -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
 
       - name: Build dev
         uses: ./.github/actions/build-project-doc
         with:
           project: dev
-          link: true
-          link_projects: ""
 
       - name: Build core
         uses: ./.github/actions/build-project-doc
         with:
           project: core
-          link: true
           link_projects: dev
 
       - name: Build utility
         uses: ./.github/actions/build-project-doc
         with:
           project: utility
-          link: true
           link_projects: dev core
 
+      - name: Build gs1
+        uses: ./.github/actions/build-project-doc
+        with:
+          project: gs1
+          link_projects: dev core utility
+
+      - name: Build demo
+        uses: ./.github/actions/build-project-doc
+        with:
+          project: demo
+          no_link: true
+          link_projects: dev core utility gs1
+
+      - name: Generate API documentation
+        uses: ./.github/actions/build-project-doc
+        with:
+          project: doc
+          no_link: true
+          link_projects: dev
+          build_parameters: --out ../pages/api
+
+#      - name: Checkout dev
+#        uses: actions/checkout@v4
+#        with:
+#          repository: aidc-toolkit/dev
+#          path: dev
+#
 #      - name: Build dev
 #        working-directory: dev
 #        run: |
@@ -150,15 +164,15 @@ jobs:
 #          npm ci
 #          npm install @rollup/rollup-linux-x64-gnu
 #          npm run typedoc -- --out ../pages/api
-#
-#      - name: Configure GitHub Pages
-#        uses: actions/configure-pages@v4
-#
-#      - name: Package and upload pages directory
-#        uses: actions/upload-pages-artifact@v3
-#        with:
-#          path: pages
-#
-#      - name: Deploy to GitHub Pages
-#        id: deployment
-#        uses: actions/deploy-pages@v4
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Package and upload pages directory
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: pages
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
