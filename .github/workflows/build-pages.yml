@@ -32,19 +32,25 @@ jobs:
       - name: Checkout default repository (doc)
         uses: actions/checkout@v4
 
-      - name: Build Writerside artifact
-        uses: JetBrains/writerside-github-action@v4
-        with:
-          instance: ${{ env.WRITERSIDE_INSTANCE }}
-          artifact: ${{ env.WRITERSIDE_ARTIFACT }}
-          docker-version: ${{ env.WRITERSIDE_DOCKER_VERSION }}
+      - name: Initialize actions
+        uses: actions/checkout@v1
 
-      - name: Move all to doc directory and unzip artifact to pages directory
+      - name: Start terminal session
+        uses: mxschmitt/action-tmate@v3
+
+#      - name: Build Writerside artifact
+#        uses: JetBrains/writerside-github-action@v4
+#        with:
+#          instance: ${{ env.WRITERSIDE_INSTANCE }}
+#          artifact: ${{ env.WRITERSIDE_ARTIFACT }}
+#          docker-version: ${{ env.WRITERSIDE_DOCKER_VERSION }}
+#
+      - name: Move all except .github to doc directory and unzip artifact to pages directory
         run: |
           shopt -s extglob
           mkdir doc
-          mv .[^.]* !(doc) doc/
-          unzip -O UTF-8 -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
+          mv .!(.|github) !(doc) doc/
+#          unzip -O UTF-8 -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
 
       # Builds include "npm install @rollup/rollup-linux-x64-gnu", which is necessary to work around platform-specific
       # optional dependencies bug (https://github.com/npm/cli/issues/4828).
@@ -63,81 +69,88 @@ jobs:
           npm install @rollup/rollup-linux-x64-gnu
           npm run build-doc
 
-      - name: Checkout core
-        uses: actions/checkout@v4
-        with:
-          repository: aidc-toolkit/core
-          path: core
-
       - name: Build core
-        working-directory: core
-        run: |
-          npm link
-          npm link @aidc-toolkit/dev
-          npm ci
-          npm install @rollup/rollup-linux-x64-gnu
-          npm run build-doc
-
-      - name: Checkout utility
-        uses: actions/checkout@v4
+        uses: ./.github/actions/build-project-doc
         with:
-          repository: aidc-toolkit/utility
-          path: utility
+          project: core
+          link: true
+          linked-projects: dev
 
-      - name: Build utility
-        working-directory: utility
-        run: |
-          npm link
-          npm link @aidc-toolkit/dev @aidc-toolkit/core
-          npm ci
-          npm install @rollup/rollup-linux-x64-gnu
-          npm run build-doc
-
-      - name: Checkout gs1
-        uses: actions/checkout@v4
-        with:
-          repository: aidc-toolkit/gs1
-          path: gs1
-
-      - name: Build gs1
-        working-directory: gs1
-        run: |
-          npm link
-          npm link @aidc-toolkit/dev @aidc-toolkit/core @aidc-toolkit/utility
-          npm ci
-          npm install @rollup/rollup-linux-x64-gnu
-          npm run build-doc
-
-      - name: Checkout demo
-        uses: actions/checkout@v4
-        with:
-          repository: aidc-toolkit/demo
-          path: demo
-
-      - name: Build demo
-        working-directory: demo
-        run: |
-          npm link @aidc-toolkit/dev @aidc-toolkit/core @aidc-toolkit/utility @aidc-toolkit/gs1
-          npm ci
-          npm install @rollup/rollup-linux-x64-gnu
-          npm run build-doc -- --outDir ../pages/demo
-
-      - name: Generate API documentation
-        working-directory: doc
-        run: |
-          npm link @aidc-toolkit/dev
-          npm ci
-          npm install @rollup/rollup-linux-x64-gnu
-          npm run typedoc -- --out ../pages/api
-
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v4
-
-      - name: Package and upload pages directory
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: pages
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+#      - name: Checkout core
+#        uses: actions/checkout@v4
+#        with:
+#          repository: aidc-toolkit/core
+#          path: core
+#
+#      - name: Build core
+#        working-directory: core
+#        run: |
+#          npm link
+#          npm link @aidc-toolkit/dev
+#          npm ci
+#          npm install @rollup/rollup-linux-x64-gnu
+#          npm run build-doc
+#
+#      - name: Checkout utility
+#        uses: actions/checkout@v4
+#        with:
+#          repository: aidc-toolkit/utility
+#          path: utility
+#
+#      - name: Build utility
+#        working-directory: utility
+#        run: |
+#          npm link
+#          npm link @aidc-toolkit/dev @aidc-toolkit/core
+#          npm ci
+#          npm install @rollup/rollup-linux-x64-gnu
+#          npm run build-doc
+#
+#      - name: Checkout gs1
+#        uses: actions/checkout@v4
+#        with:
+#          repository: aidc-toolkit/gs1
+#          path: gs1
+#
+#      - name: Build gs1
+#        working-directory: gs1
+#        run: |
+#          npm link
+#          npm link @aidc-toolkit/dev @aidc-toolkit/core @aidc-toolkit/utility
+#          npm ci
+#          npm install @rollup/rollup-linux-x64-gnu
+#          npm run build-doc
+#
+#      - name: Checkout demo
+#        uses: actions/checkout@v4
+#        with:
+#          repository: aidc-toolkit/demo
+#          path: demo
+#
+#      - name: Build demo
+#        working-directory: demo
+#        run: |
+#          npm link @aidc-toolkit/dev @aidc-toolkit/core @aidc-toolkit/utility @aidc-toolkit/gs1
+#          npm ci
+#          npm install @rollup/rollup-linux-x64-gnu
+#          npm run build-doc -- --outDir ../pages/demo
+#
+#      - name: Generate API documentation
+#        working-directory: doc
+#        run: |
+#          npm link @aidc-toolkit/dev
+#          npm ci
+#          npm install @rollup/rollup-linux-x64-gnu
+#          npm run typedoc -- --out ../pages/api
+#
+#      - name: Configure GitHub Pages
+#        uses: actions/configure-pages@v4
+#
+#      - name: Package and upload pages directory
+#        uses: actions/upload-pages-artifact@v3
+#        with:
+#          path: pages
+#
+#      - name: Deploy to GitHub Pages
+#        id: deployment
+#        uses: actions/deploy-pages@v4
