@@ -40,7 +40,6 @@ jobs:
           docker-version: ${{ env.WRITERSIDE_DOCKER_VERSION }}
 
       - name: Move all to doc directory
-        working-directory: dev
         run: |
           shopt -s extglob
           mkdir doc
