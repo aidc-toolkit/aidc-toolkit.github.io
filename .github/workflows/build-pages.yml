@@ -47,123 +47,42 @@ jobs:
           unzip -O UTF-8 -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
 
       - name: Build dev
-        uses: ./.github/actions/build-project-doc
+        uses: .github/actions/build-project-doc
         with:
           project: dev
 
       - name: Build core
-        uses: ./.github/actions/build-project-doc
+        uses: .github/actions/build-project-doc
         with:
           project: core
           link_projects: dev
 
       - name: Build utility
-        uses: ./.github/actions/build-project-doc
+        uses: .github/actions/build-project-doc
         with:
           project: utility
           link_projects: dev core
 
       - name: Build gs1
-        uses: ./.github/actions/build-project-doc
+        uses: .github/actions/build-project-doc
         with:
           project: gs1
           link_projects: dev core utility
 
       - name: Build demo
-        uses: ./.github/actions/build-project-doc
+        uses: .github/actions/build-project-doc
         with:
           project: demo
           no_link: true
           link_projects: dev core utility gs1
 
       - name: Generate API documentation
-        uses: ./.github/actions/build-project-doc
+        uses: .github/actions/build-project-doc
         with:
           project: doc
           no_link: true
           link_projects: dev
           build_parameters: --out ../pages/api
-
-#      - name: Checkout dev
-#        uses: actions/checkout@v4
-#        with:
-#          repository: aidc-toolkit/dev
-#          path: dev
-#
-#      - name: Build dev
-#        working-directory: dev
-#        run: |
-#          npm link
-#          npm ci
-#          npm install @rollup/rollup-linux-x64-gnu
-#          npm run build-doc
-#
-#      - name: Checkout core
-#        uses: actions/checkout@v4
-#        with:
-#          repository: aidc-toolkit/core
-#          path: core
-#
-#      - name: Build core
-#        working-directory: core
-#        run: |
-#          npm link
-#          npm link @aidc-toolkit/dev
-#          npm ci
-#          npm install @rollup/rollup-linux-x64-gnu
-#          npm run build-doc
-#
-#      - name: Checkout utility
-#        uses: actions/checkout@v4
-#        with:
-#          repository: aidc-toolkit/utility
-#          path: utility
-#
-#      - name: Build utility
-#        working-directory: utility
-#        run: |
-#          npm link
-#          npm link @aidc-toolkit/dev @aidc-toolkit/core
-#          npm ci
-#          npm install @rollup/rollup-linux-x64-gnu
-#          npm run build-doc
-#
-#      - name: Checkout gs1
-#        uses: actions/checkout@v4
-#        with:
-#          repository: aidc-toolkit/gs1
-#          path: gs1
-#
-#      - name: Build gs1
-#        working-directory: gs1
-#        run: |
-#          npm link
-#          npm link @aidc-toolkit/dev @aidc-toolkit/core @aidc-toolkit/utility
-#          npm ci
-#          npm install @rollup/rollup-linux-x64-gnu
-#          npm run build-doc
-#
-#      - name: Checkout demo
-#        uses: actions/checkout@v4
-#        with:
-#          repository: aidc-toolkit/demo
-#          path: demo
-#
-#      - name: Build demo
-#        working-directory: demo
-#        run: |
-#          npm link @aidc-toolkit/dev @aidc-toolkit/core @aidc-toolkit/utility @aidc-toolkit/gs1
-#          npm ci
-#          npm install @rollup/rollup-linux-x64-gnu
-#          npm run build-doc -- --outDir ../pages/demo
-#
-#      - name: Generate API documentation
-#        working-directory: doc
-#        run: |
-#          npm link @aidc-toolkit/dev
-#          npm ci
-#          npm install @rollup/rollup-linux-x64-gnu
-#          npm run typedoc -- --out ../pages/api
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v4
