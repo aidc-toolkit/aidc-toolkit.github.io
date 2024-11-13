@@ -11,27 +11,26 @@ inputs:
     required: false
     type: string
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout ${{ inputs.project }}
-        uses: actions/checkout@v4
-        with:
-          repository: aidc-toolkit/${{ inputs.project }}
-          path: ${{ inputs.project }}
+runs:
+  using: composite
+  steps:
+    - name: Checkout ${{ inputs.project }}
+      uses: actions/checkout@v4
+      with:
+        repository: aidc-toolkit/${{ inputs.project }}
+        path: ${{ inputs.project }}
 
-      - name: Start terminal session
-        uses: mxschmitt/action-tmate@v3
+    - name: Start terminal session
+      uses: mxschmitt/action-tmate@v3
 
-      - name: Build ${{ inputs.project }}
-        working-directory: ${{ inputs.project }}
-        run: |
-          npm link
-          npm link @aidc-toolkit/dev
-          npm ci
-          npm install @rollup/rollup-linux-x64-gnu
-          npm run build-doc
+    - name: Build ${{ inputs.project }}
+      working-directory: ${{ inputs.project }}
+      run: |
+        npm link
+        npm link @aidc-toolkit/dev
+        npm ci
+        npm install @rollup/rollup-linux-x64-gnu
+        npm run build-doc
 
-      - name: Start terminal session
-        uses: mxschmitt/action-tmate@v3
+    - name: Start terminal session
+      uses: mxschmitt/action-tmate@v3

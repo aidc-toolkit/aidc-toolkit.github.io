@@ -32,9 +32,6 @@ jobs:
       - name: Checkout default repository (doc)
         uses: actions/checkout@v4
 
-      - name: Start terminal session
-        uses: mxschmitt/action-tmate@v3
-
 #      - name: Build Writerside artifact
 #        uses: JetBrains/writerside-github-action@v4
 #        with:
