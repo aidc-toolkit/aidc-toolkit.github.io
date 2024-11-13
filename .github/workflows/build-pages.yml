@@ -75,6 +75,7 @@ jobs:
           project: demo
           no_link: true
           link_projects: dev core utility gs1
+          build_parameters: --outDir ../pages/demo
 
       - name: Generate API documentation
         uses: ./.github/actions/build-project-doc
