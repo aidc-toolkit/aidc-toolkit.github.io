@@ -47,37 +47,37 @@ jobs:
           unzip -O UTF-8 -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
 
       - name: Build dev
-        uses: .github/actions/build-project-doc
+        uses: ./.github/actions/build-project-doc
         with:
           project: dev
 
       - name: Build core
-        uses: .github/actions/build-project-doc
+        uses: ./.github/actions/build-project-doc
         with:
           project: core
           link_projects: dev
 
       - name: Build utility
-        uses: .github/actions/build-project-doc
+        uses: ./.github/actions/build-project-doc
         with:
           project: utility
           link_projects: dev core
 
       - name: Build gs1
-        uses: .github/actions/build-project-doc
+        uses: ./.github/actions/build-project-doc
         with:
           project: gs1
           link_projects: dev core utility
 
       - name: Build demo
-        uses: .github/actions/build-project-doc
+        uses: ./.github/actions/build-project-doc
         with:
           project: demo
           no_link: true
           link_projects: dev core utility gs1
 
       - name: Generate API documentation
-        uses: .github/actions/build-project-doc
+        uses: ./.github/actions/build-project-doc
         with:
           project: doc
           no_link: true
