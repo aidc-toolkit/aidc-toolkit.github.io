@@ -64,7 +64,7 @@ jobs:
           npm run build-doc
 
       - name: Build core
-        uses: .github/actions/build-project-doc
+        uses: ./.github/actions/build-project-doc
         with:
           project: core
           link: true
