@@ -53,8 +53,9 @@ jobs:
           # Unzip artifact to pages directory
           unzip -O UTF-8 -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
           \
-          echo ${{ github.event }}
-          echo ${{ toJSON(github.event) }}
+          cat << EOF
+          ${{ toJSON(github.event) }}
+          EOF
 
       - name: Start terminal session
         uses: mxschmitt/action-tmate@v3
