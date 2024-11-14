@@ -54,10 +54,8 @@ jobs:
           # Enable glob expansion.
           shopt -s extglob
           \
-          # Create project-specific directory.
-          mkdir doc
-          \
           # Move all except .github to doc directory.
+          mkdir doc
           mv .!(|.|github) !(doc) doc/
           \
           # Unzip artifact to pages directory
@@ -103,13 +101,35 @@ jobs:
           build_parameters: --out ../pages/api
 
       - name: Save release
-        if: github.event_name == 'push'
+        if: github.event_name == 'release'
         run: |
+          # Create pages.zip in root directory then move to pages directory.
           cd pages
           zip -q -r ../pages .
           mv ../pages.zip .
+          \
           # Release is its own preview.
           unzip -qq pages.zip -d preview
+
+      - name: Restore release
+        if: github.event_name == 'push'
+        run: |
+          # Enable glob expansion.
+          shopt -s extglob
+          \
+          # Move pages to pages/preview directory.
+          cd pages
+          mkdir preview
+          mv .!(|.) !(preview) preview/
+          \
+          # Get and unzip release version.
+          curl https://aidc-toolkit.github.io/pages.zip -o pages.zip
+          unzip -qq pages.zip
+
+      - name: Patch preview
+        run: |
+          cd pages/preview
+          find . -name "*.html" -print0 | xargs -0 sed -i '' -e 's/https:\/\/aidc-toolkit.github.io/https:\/\/aidc-toolkit.github.io\/preview/g'
 
       - name: Start terminal session
         uses: mxschmitt/action-tmate@v3
