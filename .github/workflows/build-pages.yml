@@ -28,6 +28,7 @@ jobs:
           echo ${{ github.event_name }}
           echo ${{ github.event.ref }}
           echo ${{ github.ref }}
+          echo ${{ github.ref_name }}
           exit 1
 
 #      # Insert this at the appropriate step to start a terminal session for debugging.
