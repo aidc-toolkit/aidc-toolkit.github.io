@@ -53,11 +53,11 @@ jobs:
         run: |
           # Enable glob expansion.
           shopt -s extglob nullglob
-          \
+
           # Move all except .github to doc directory.
           mkdir doc
           mv .!(|.|github) !(doc) doc/
-          \
+
           # Unzip artifact to pages directory
           unzip -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
 
@@ -107,7 +107,7 @@ jobs:
           cd pages
           zip -q -r ../pages .
           mv ../pages.zip .
-          \
+
           # Release is its own preview.
           unzip -qq pages.zip -d preview
 
@@ -116,12 +116,12 @@ jobs:
         run: |
           # Enable glob expansion.
           shopt -s extglob nullglob
-          \
+
           # Move pages to pages/preview directory.
           cd pages
           mkdir preview
           mv .!(|.) !(preview) preview/
-          \
+
           # Get and unzip release version.
           curl -s https://aidc-toolkit.github.io/pages.zip -o pages.zip
           unzip -qq pages.zip

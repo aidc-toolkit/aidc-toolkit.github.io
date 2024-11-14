@@ -36,17 +36,18 @@ runs:
         then
           npm link
         fi
-        \
+
         # Link all dependent projects
         for link_project in ${{ inputs.link_projects }}
         do
           npm link @aidc-toolkit/$link_project
         done
-        \
+
         npm ci
+
         # This is necessary to work around platform-specific optional dependencies bug
         # (https://github.com/npm/cli/issues/4828).
         npm install @rollup/rollup-linux-x64-gnu
-        \
+
         # All projects have build-doc script.
         npm run build-doc -- ${{ inputs.build_parameters }}
