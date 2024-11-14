@@ -18,11 +18,13 @@ runs:
   using: composite
   steps:
     - name: Checkout ${{ inputs.project }}
-      # This project has already been checked out and moved to the correct directory.
-      if: ${{ inputs.project != 'doc' }}
+      # Documentation (this) project has already been checked out and moved to the correct directory.
+      if: inputs.project != 'doc'
       uses: actions/checkout@v4
       with:
         repository: aidc-toolkit/${{ inputs.project }}
+        # Get the matching reference.
+        ref: ${{ github.ref_name }}
         path: ${{ inputs.project }}
 
     - name: Build ${{ inputs.project }}

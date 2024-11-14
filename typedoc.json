@@ -15,5 +15,5 @@
   "out": "api",
   "theme": "typedoc-github-theme",
   "sourceLinkExternal": true,
-  "titleLink": "https://github.com/aidc-toolkit"
+  "titleLink": "https://aidc-toolkit.github.io"
 }

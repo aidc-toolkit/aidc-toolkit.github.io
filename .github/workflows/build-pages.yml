@@ -1,12 +1,12 @@
 name: Build GitHub Pages
 
 on:
-  push:
-    branches:
-      - main
   release:
     types:
       - published
+  push:
+    branches:
+      - main
 
 permissions:
   id-token: write
@@ -22,14 +22,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # Output some debugging information and exit.
-      - name: Debug
-        run: |
-          echo ${{ github.event_name }}
-          echo ${{ github.event.ref }}
-          echo ${{ github.ref }}
-          echo ${{ github.ref_name }}
-          exit 1
+#      # Output some debugging information and exit.
+#      - name: Debug
+#        run: |
+#          echo ${{ github.event_name }}
+#          echo ${{ github.ref_name }}
+#          exit 1
 
 #      # Insert this at the appropriate step to start a terminal session for debugging.
 #      - name: Start terminal session
@@ -106,6 +104,15 @@ jobs:
           no_link: true
           link_projects: dev
           build_parameters: --out ../pages/api
+
+      - name: Save release
+        if: github.event_name == 'push'
+        run: |
+          zip -r pages pages
+          mv pages.zip pages
+
+      - name: Start terminal session
+        uses: mxschmitt/action-tmate@v3
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v4
