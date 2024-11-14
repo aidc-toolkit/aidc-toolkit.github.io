@@ -61,10 +61,7 @@ jobs:
           mv .!(|.|github) !(doc) doc/
           \
           # Unzip artifact to pages directory
-          unzip -O UTF-8 -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
-
-      - name: Start terminal session
-        uses: mxschmitt/action-tmate@v3
+          unzip -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
 
       - name: Build dev
         uses: ./.github/actions/build-project-doc
@@ -108,8 +105,11 @@ jobs:
       - name: Save release
         if: github.event_name == 'push'
         run: |
-          zip -r pages pages
-          mv pages.zip pages
+          cd pages
+          zip -q -r ../pages .
+          mv ../pages.zip .
+          # Release is its own preview.
+          unzip -qq pages.zip -d preview
 
       - name: Start terminal session
         uses: mxschmitt/action-tmate@v3
