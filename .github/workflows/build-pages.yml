@@ -126,6 +126,9 @@ jobs:
           curl https://aidc-toolkit.github.io/pages.zip -o pages.zip
           unzip -qq pages.zip
 
+      - name: Start terminal session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Patch preview
         run: |
           cd pages/preview
