@@ -52,7 +52,7 @@ jobs:
       - name: Finalize doc
         run: |
           # Enable glob expansion.
-          shopt -s extglob
+          shopt -s extglob nullglob
           \
           # Move all except .github to doc directory.
           mkdir doc
@@ -115,7 +115,7 @@ jobs:
         if: github.event_name == 'push'
         run: |
           # Enable glob expansion.
-          shopt -s extglob
+          shopt -s extglob nullglob
           \
           # Move pages to pages/preview directory.
           cd pages
