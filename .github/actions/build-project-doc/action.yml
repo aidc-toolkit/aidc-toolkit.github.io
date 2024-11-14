@@ -18,26 +18,33 @@ runs:
   using: composite
   steps:
     - name: Checkout ${{ inputs.project }}
+      # This project has already been checked out and moved to the correct directory.
       if: ${{ inputs.project != 'doc' }}
       uses: actions/checkout@v4
       with:
         repository: aidc-toolkit/${{ inputs.project }}
         path: ${{ inputs.project }}
 
-    # Build includes "npm install @rollup/rollup-linux-x64-gnu", which is necessary to work around platform-specific
-    # optional dependencies bug (https://github.com/npm/cli/issues/4828).
     - name: Build ${{ inputs.project }}
       shell: bash
       working-directory: ${{ inputs.project }}
       run: |
+        # Not all projects are dependencies for other projects.
         if [ "${{ inputs.no_link }}" != "true" ]
         then
           npm link
         fi
+        \
+        # Link all dependent projects
         for link_project in ${{ inputs.link_projects }}
         do
           npm link @aidc-toolkit/$link_project
         done
+        \
         npm ci
+        # This is necessary to work around platform-specific optional dependencies bug
+        # (https://github.com/npm/cli/issues/4828).
         npm install @rollup/rollup-linux-x64-gnu
+        \
+        # All projects have build-doc script.
         npm run build-doc -- ${{ inputs.build_parameters }}

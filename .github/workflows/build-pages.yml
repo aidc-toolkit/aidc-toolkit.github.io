@@ -6,7 +6,6 @@ on:
   workflow_dispatch:
 
 permissions:
-  id-token: write
   pages: write
 
 env:
@@ -39,11 +38,18 @@ jobs:
           artifact: ${{ env.WRITERSIDE_ARTIFACT }}
           docker-version: ${{ env.WRITERSIDE_DOCKER_VERSION }}
 
-      - name: Move all except .github to doc directory and unzip artifact to pages directory
+      - name: Finalize doc
         run: |
+          # Enable glob expansion.
           shopt -s extglob
+          \
+          # Create project-specific directory.
           mkdir doc
+          \
+          # Move all except .github to doc directory.
           mv .!(|.|github) !(doc) doc/
+          \
+          # Unzip artifact to pages directory
           unzip -O UTF-8 -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
 
       - name: Build dev
@@ -88,7 +94,7 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v4
 
-      - name: Package and upload pages directory
+      - name: Upload pages directory
         uses: actions/upload-pages-artifact@v3
         with:
           path: pages
