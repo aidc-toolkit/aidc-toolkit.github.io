@@ -2,7 +2,8 @@ name: Build GitHub Pages
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
 
 permissions:
   id-token: write
@@ -10,9 +11,9 @@ permissions:
 
 env:
   NODE_VERSION: 22
-  WRITERSIDE_INSTANCE: "Writerside/doc"
-  WRITERSIDE_ARTIFACT: "webHelpDOC2-all"
-  WRITERSIDE_DOCKER_VERSION: "243.21565"
+  WRITERSIDE_INSTANCE: Writerside/doc
+  WRITERSIDE_ARTIFACT: webHelpDOC2-all
+  WRITERSIDE_DOCKER_VERSION: 243.21565
 
 jobs:
   build:
@@ -51,6 +52,12 @@ jobs:
           \
           # Unzip artifact to pages directory
           unzip -O UTF-8 -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
+          \
+          echo ${{ github.event }}
+          echo ${{ toJSON(github.event) }}
+
+      - name: Start terminal session
+        uses: mxschmitt/action-tmate@v3
 
       - name: Build dev
         uses: ./.github/actions/build-project-doc
