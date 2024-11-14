@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  release:
+    types:
+      - published
 
 permissions:
   id-token: write
@@ -19,6 +22,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # Output some debugging information and exit.
+      - name: Debug
+        run: |
+          echo ${{ github.event_name }}
+          echo ${{ github.event.ref }}
+          echo ${{ GITHUB_REF }}
+          exit 1
+
 #      # Insert this at the appropriate step to start a terminal session for debugging.
 #      - name: Start terminal session
 #        uses: mxschmitt/action-tmate@v3
@@ -52,8 +63,6 @@ jobs:
           \
           # Unzip artifact to pages directory
           unzip -O UTF-8 -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
-          \
-          echo ${{ github.event_name }}
 
       - name: Start terminal session
         uses: mxschmitt/action-tmate@v3
