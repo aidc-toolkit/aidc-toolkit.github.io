@@ -126,16 +126,10 @@ jobs:
           curl https://aidc-toolkit.github.io/pages.zip -o pages.zip
           unzip -qq pages.zip
 
-      - name: Start terminal session
-        uses: mxschmitt/action-tmate@v3
-
       - name: Patch preview
         run: |
           cd pages/preview
-          find . -name "*.html" -print0 | xargs -0 sed -i '' -e 's/https:\/\/aidc-toolkit.github.io/https:\/\/aidc-toolkit.github.io\/preview/g'
-
-      - name: Start terminal session
-        uses: mxschmitt/action-tmate@v3
+          find . -name "*.html" -print0 | xargs -0 sed -i -e 's/https:\/\/aidc-toolkit.github.io/https:\/\/aidc-toolkit.github.io\/preview/g'
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v4
