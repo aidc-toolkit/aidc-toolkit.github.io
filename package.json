@@ -1,6 +1,6 @@
 {
   "name": "@aidc-toolkit/doc",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "description": "Documentation for AIDC Toolkit",
   "type": "module",
   "private": true,
@@ -20,7 +20,7 @@
     "build-doc": "typedoc"
   },
   "devDependencies": {
-    "@aidc-toolkit/dev": "^0.9.2",
+    "@aidc-toolkit/dev": "^0.9.3",
     "copy-files-from-to": "^3.11.0",
     "rimraf": "^6.0.1",
     "typedoc": "^0.26.11",
