@@ -250,15 +250,17 @@
             <p>
                 Validation is a requirement for any application. The AIDC Toolkit provides a simple but extensible
                 validation framework built on two interfaces:
-                <a href="%apiBase%/interfaces/Utility.StringValidation.html"><code>StringValidation</code></a> and
-                <a href="%apiBase%/interfaces/Utility.StringValidator.html"><code>StringValidator</code></a>. The two
-                are related in that an interface extending <code>StringValidation</code> may be passed as a parameter to
-                the <code>validate()</code> method of a class implementing <code>StringValidator</code> to restrict
-                validation further. For example, the <a href="%apiBase%/interfaces/Utility.CharacterSetValidator.html">
+                <a href="%gitHubPagesBase%/api/interfaces/Utility.StringValidation.html"><code>StringValidation</code>
+                </a> and
+                <a href="%gitHubPagesBase%/api/interfaces/Utility.StringValidator.html"><code>StringValidator</code>
+                </a>. The two are related in that an interface extending <code>StringValidation</code> may be passed as
+                a parameter to the <code>validate()</code> method of a class implementing <code>StringValidator</code>
+                to restrict validation further. For example, the
+                <a href="%gitHubPagesBase%/api/classes/Utility.CharacterSetValidator.html">
                 <code>CharacterSetValidator</code></a> implementation accepts a
-                <a href="%apiBase%/interfaces/Utility.CharacterSetValidation.html"><code>CharacterSetValidation</code>
-                </a> object that can constrain the length and limit the way numeric values are expressed (e.g., exclude
-                zero as the first character).
+                <a href="%gitHubPagesBase%/api/interfaces/Utility.CharacterSetValidation.html">
+                <code>CharacterSetValidation</code></a> object that can constrain the length and limit the way numeric
+                values are expressed (e.g., exclude zero as the first character).
             </p>
 
             <p>
@@ -371,7 +373,8 @@
                         <td>Character set</td>
                         <td>
                             Creates strings by mapping <code>bigint</code> values to fixed length string representations
-                            using the character set as the "digits" of the string. Predefined character set creators are:
+                            using the character set as the "digits" of the string. Predefined character set creators
+                            are:
                             <list>
                                 <li>
                                     Numeric (0-9)

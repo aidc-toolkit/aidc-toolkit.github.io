@@ -8,8 +8,8 @@
         The <code>core</code> package provides support for internationalization, built on the robust and popular
         <a href="https://i18next.com">i18next</a> package. Applications can take advantage of the additional abstraction
         provided by the <code>core</code> package by
-        <a href="%apiBase%/functions/Core.i18nAddResourceBundle.html">adding their own resource bundles</a> or can
-        manage internationalization themselves.
+        <a href="%gitHubPagesBase%/api/functions/Core.i18nAddResourceBundle.html">adding their own resource bundles</a>
+        or can manage internationalization themselves.
     </p>
 
     <chapter title="Internationalization" id="internationalization">
