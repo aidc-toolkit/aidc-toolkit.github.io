@@ -22,6 +22,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Dump vars
+        run: |
+          echo ${{ toJson(vars) }}
+          exit 1
+
       - name: Dump GitHub context
         if: vars.DUMP_GITHUB_CONTEXT == true
         run: |
