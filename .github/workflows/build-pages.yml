@@ -29,16 +29,11 @@ jobs:
           EOF
 
       - name: Dump GitHub context
-        if: vars.DUMP_GITHUB_CONTEXT
+        if: vars.DUMP_GITHUB_CONTEXT == 'true'
         run: |
           cat << EOF
           ${{ toJSON(github) }}
           EOF
-
-      - name: Dump job context
-        if: vars.DUMP_JOB_CONTEXT == true
-        run: |
-          echo ${{ toJSON(job) }}
 
       - name: Setup node
         uses: actions/setup-node@v4
@@ -69,7 +64,7 @@ jobs:
           unzip -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
 
       - name: Start terminal session (post doc)
-        if: vars.TERMINAL_POST_DOC == true
+        if: vars.TERMINAL_POST_DOC == 'true'
         uses: mxschmitt/action-tmate@v3
 
       - name: Build dev
@@ -104,7 +99,7 @@ jobs:
           build_parameters: --outDir ../pages/demo
 
       - name: Start terminal session (post build)
-        if: vars.TERMINAL_POST_BUILD == true
+        if: vars.TERMINAL_POST_BUILD == 'true'
         uses: mxschmitt/action-tmate@v3
 
       - name: Generate API documentation
@@ -116,11 +111,11 @@ jobs:
           build_parameters: --out ../pages/api
 
       - name: Start terminal session (post API)
-        if: vars.TERMINAL_POST_API == true
+        if: vars.TERMINAL_POST_API == 'true'
         uses: mxschmitt/action-tmate@v3
 
       - name: Save release
-        if: github.event_name == 'push'
+        if: github.event_name == 'release'
         run: |
           # Create pages.zip in root directory then move to pages directory.
           cd pages
@@ -131,7 +126,7 @@ jobs:
           unzip -qq pages.zip -d preview
 
       - name: Restore release
-        if: github.event_name == 'release'
+        if: github.event_name == 'push'
         run: |
           # Enable glob expansion.
           shopt -s extglob nullglob
@@ -146,7 +141,7 @@ jobs:
           unzip -qq pages.zip
 
       - name: Start terminal session (post release)
-        if: vars.TERMINAL_POST_RELEASE == true
+        if: vars.TERMINAL_POST_RELEASE == 'true'
         uses: mxschmitt/action-tmate@v3
 
       - name: Patch preview
@@ -155,7 +150,7 @@ jobs:
           find . -name "*.html" -print0 | xargs -0 sed -i -e 's/https:\/\/aidc-toolkit.github.io/https:\/\/aidc-toolkit.github.io\/preview/g'
 
       - name: Start terminal session (post patch)
-        if: vars.TERMINAL_POST_PATCH == true
+        if: vars.TERMINAL_POST_PATCH == 'true'
         uses: mxschmitt/action-tmate@v3
 
       - name: Configure GitHub Pages
@@ -171,5 +166,5 @@ jobs:
         uses: actions/deploy-pages@v4
 
       - name: Start terminal session (post deploy)
-        if: vars.TERMINAL_POST_DEPLOY == true
+        if: vars.TERMINAL_POST_DEPLOY == 'true'
         uses: mxschmitt/action-tmate@v3
