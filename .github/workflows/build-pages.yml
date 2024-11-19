@@ -20,7 +20,12 @@ env:
 
 jobs:
   build:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     runs-on: ubuntu-latest
+
     steps:
       - name: Dump vars
         if: vars.DUMP_VARS == 'true'
@@ -155,7 +160,7 @@ jobs:
         uses: mxschmitt/action-tmate@v3
 
       - name: Configure GitHub Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
 
       - name: Upload pages directory
         uses: actions/upload-pages-artifact@v3
@@ -163,6 +168,7 @@ jobs:
           path: pages
 
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
 
       - name: Start terminal session (post deploy)
