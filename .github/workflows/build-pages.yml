@@ -28,7 +28,7 @@ jobs:
           ${{ toJSON(github) }}
           EOF
           cat << EOF
-          ${{ toJSON(jobs) }}
+          ${{ toJSON(job) }}
           EOF
           exit 1
 
