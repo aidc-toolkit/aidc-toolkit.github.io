@@ -23,18 +23,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Dump vars
-        env:
-          XXX: ${{ toJSON(vars) }}
-          YYY: ${{ toJSON(github) }}
         run: |
           cat << EOF
-          $XXX
-          EOF
-          cat << EOF
-          $YYY
-          EOF
-          cat << EOF
           ${{ toJSON(github) }}
+          EOF
+          cat << EOF
+          ${{ toJSON(jobs) }}
           EOF
           exit 1
 
