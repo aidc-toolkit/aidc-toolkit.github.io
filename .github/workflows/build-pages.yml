@@ -22,17 +22,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-#      # Output some debugging information and exit.
-#      - name: Debug
-#        run: |
-#          echo ${{ github.event_name }}
-#          echo ${{ github.ref_name }}
-#          exit 1
-#
-#      # Insert this at the appropriate step to start a terminal session for debugging.
-#      - name: Start terminal session
-#        uses: mxschmitt/action-tmate@v3
-#
+      - name: Dump GitHub context
+        if: vars.DUMP_GITHUB_CONTEXT
+        run: |
+          echo ${{ toJson(github) }}
+
+      - name: Dump job context
+        if: vars.DUMP_JOB_CONTEXT
+        run: |
+          echo ${{ toJson(job) }}
+
       - name: Setup node
         uses: actions/setup-node@v4
         with:
@@ -60,6 +59,10 @@ jobs:
 
           # Unzip artifact to pages directory
           unzip -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
+
+      - name: Start terminal session (post doc)
+        if: vars.TERMINAL_POST_DOC
+        uses: mxschmitt/action-tmate@v3
 
       - name: Build dev
         uses: ./.github/actions/build-project-doc
@@ -92,6 +95,10 @@ jobs:
           link_projects: dev core utility gs1
           build_parameters: --outDir ../pages/demo
 
+      - name: Start terminal session (post build)
+        if: vars.TERMINAL_POST_BUILD
+        uses: mxschmitt/action-tmate@v3
+
       - name: Generate API documentation
         uses: ./.github/actions/build-project-doc
         with:
@@ -100,8 +107,12 @@ jobs:
           link_projects: dev
           build_parameters: --out ../pages/api
 
+      - name: Start terminal session (post API)
+        if: vars.TERMINAL_POST_API
+        uses: mxschmitt/action-tmate@v3
+
       - name: Save release
-        if: github.event_name == 'release'
+        if: github.event_name == 'push'
         run: |
           # Create pages.zip in root directory then move to pages directory.
           cd pages
@@ -112,7 +123,7 @@ jobs:
           unzip -qq pages.zip -d preview
 
       - name: Restore release
-        if: github.event_name == 'push'
+        if: github.event_name == 'release'
         run: |
           # Enable glob expansion.
           shopt -s extglob nullglob
@@ -126,10 +137,18 @@ jobs:
           curl -s https://aidc-toolkit.github.io/pages.zip -o pages.zip
           unzip -qq pages.zip
 
+      - name: Start terminal session (post release)
+        if: vars.TERMINAL_POST_RELEASE
+        uses: mxschmitt/action-tmate@v3
+
       - name: Patch preview
         run: |
           cd pages/preview
           find . -name "*.html" -print0 | xargs -0 sed -i -e 's/https:\/\/aidc-toolkit.github.io/https:\/\/aidc-toolkit.github.io\/preview/g'
+
+      - name: Start terminal session (post patch)
+        if: vars.TERMINAL_POST_PATCH
+        uses: mxschmitt/action-tmate@v3
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v4
@@ -142,3 +161,7 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Start terminal session (post deploy)
+        if: vars.TERMINAL_POST_DEPLOY
+        uses: mxschmitt/action-tmate@v3
