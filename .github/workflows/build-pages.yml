@@ -23,7 +23,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Dump vars
+        env:
+          XXX: ${{ toJson(vars) }}
+          YYY: ${{ toJson(vars) }}
         run: |
+          echo $XXX
+          echo $YYY
           echo ${{ toJson(vars) }}
           exit 1
 
