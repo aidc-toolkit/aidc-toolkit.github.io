@@ -23,12 +23,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub context
-        if: vars.DUMP_GITHUB_CONTEXT
+        if: vars.DUMP_GITHUB_CONTEXT == true
         run: |
           echo ${{ toJson(github) }}
 
       - name: Dump job context
-        if: vars.DUMP_JOB_CONTEXT
+        if: vars.DUMP_JOB_CONTEXT == true
         run: |
           echo ${{ toJson(job) }}
 
@@ -61,7 +61,7 @@ jobs:
           unzip -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
 
       - name: Start terminal session (post doc)
-        if: vars.TERMINAL_POST_DOC
+        if: vars.TERMINAL_POST_DOC == true
         uses: mxschmitt/action-tmate@v3
 
       - name: Build dev
@@ -96,7 +96,7 @@ jobs:
           build_parameters: --outDir ../pages/demo
 
       - name: Start terminal session (post build)
-        if: vars.TERMINAL_POST_BUILD
+        if: vars.TERMINAL_POST_BUILD == true
         uses: mxschmitt/action-tmate@v3
 
       - name: Generate API documentation
@@ -108,7 +108,7 @@ jobs:
           build_parameters: --out ../pages/api
 
       - name: Start terminal session (post API)
-        if: vars.TERMINAL_POST_API
+        if: vars.TERMINAL_POST_API == true
         uses: mxschmitt/action-tmate@v3
 
       - name: Save release
@@ -138,7 +138,7 @@ jobs:
           unzip -qq pages.zip
 
       - name: Start terminal session (post release)
-        if: vars.TERMINAL_POST_RELEASE
+        if: vars.TERMINAL_POST_RELEASE == true
         uses: mxschmitt/action-tmate@v3
 
       - name: Patch preview
@@ -147,7 +147,7 @@ jobs:
           find . -name "*.html" -print0 | xargs -0 sed -i -e 's/https:\/\/aidc-toolkit.github.io/https:\/\/aidc-toolkit.github.io\/preview/g'
 
       - name: Start terminal session (post patch)
-        if: vars.TERMINAL_POST_PATCH
+        if: vars.TERMINAL_POST_PATCH == true
         uses: mxschmitt/action-tmate@v3
 
       - name: Configure GitHub Pages
@@ -163,5 +163,5 @@ jobs:
         uses: actions/deploy-pages@v4
 
       - name: Start terminal session (post deploy)
-        if: vars.TERMINAL_POST_DEPLOY
+        if: vars.TERMINAL_POST_DEPLOY == true
         uses: mxschmitt/action-tmate@v3
