@@ -121,7 +121,7 @@ jobs:
           cat << EOF
           Date: `date`
           Ref: $GITHUB_REF
-          echo Commit: $GITHUB_SHA
+          Commit: $GITHUB_SHA
           EOF > pages/repository.txt
 
       - name: Start terminal session (post API)
