@@ -22,16 +22,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-#      - name: Dump vars
-#        run: |
-#          cat << EOF
-#          ${{ toJSON(github) }}
-#          EOF
-#          cat << EOF
-#          ${{ toJSON(steps) }}
-#          EOF
-#          exit 1
-#
+      - name: Dump vars
+        run: |
+          cat << EOF
+          ${{ toJSON(vars) }}
+          EOF
+
       - name: Dump GitHub context
         if: vars.DUMP_GITHUB_CONTEXT
         run: |
