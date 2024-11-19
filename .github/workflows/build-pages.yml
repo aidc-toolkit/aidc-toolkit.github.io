@@ -23,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Dump vars
+        if: vars.DUMP_VARS == 'true'
         run: |
           cat << EOF
           ${{ toJSON(vars) }}
@@ -162,7 +163,6 @@ jobs:
           path: pages
 
       - name: Deploy to GitHub Pages
-        id: deployment
         uses: actions/deploy-pages@v4
 
       - name: Start terminal session (post deploy)
