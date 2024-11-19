@@ -25,11 +25,17 @@ jobs:
       - name: Dump vars
         env:
           XXX: ${{ toJSON(vars) }}
-          YYY: ${{ toJSON(vars) }}
+          YYY: ${{ toJSON(github) }}
         run: |
-          echo $XXX
-          echo $YYY
-          echo ${{ toJSON(vars) }}
+          cat << EOF
+          $XXX
+          EOF
+          cat << EOF
+          $YYY
+          EOF
+          cat << EOF
+          ${{ toJSON(github) }}
+          EOF
           exit 1
 
       - name: Dump GitHub context
