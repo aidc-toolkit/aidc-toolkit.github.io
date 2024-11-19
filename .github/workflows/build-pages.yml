@@ -118,11 +118,11 @@ jobs:
 
       - name: Create repository state file
         run: |
-          cat << EOF
+          cat > pages/repository.txt << EOF
           Date: `date`
           Ref: $GITHUB_REF
           Commit: $GITHUB_SHA
-          EOF > pages/repository.txt
+          EOF
 
       - name: Start terminal session (post API)
         if: vars.TERMINAL_POST_API == 'true'
