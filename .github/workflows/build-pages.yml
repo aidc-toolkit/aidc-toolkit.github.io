@@ -28,7 +28,7 @@ jobs:
           ${{ toJSON(github) }}
           EOF
           cat << EOF
-          ${{ toJSON(matrix) }}
+          ${{ toJSON(steps) }}
           EOF
           exit 1
 
