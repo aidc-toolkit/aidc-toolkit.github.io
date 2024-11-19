@@ -24,23 +24,23 @@ jobs:
     steps:
       - name: Dump vars
         env:
-          XXX: ${{ toJson(vars) }}
-          YYY: ${{ toJson(vars) }}
+          XXX: ${{ toJSON(vars) }}
+          YYY: ${{ toJSON(vars) }}
         run: |
           echo $XXX
           echo $YYY
-          echo ${{ toJson(vars) }}
+          echo ${{ toJSON(vars) }}
           exit 1
 
       - name: Dump GitHub context
         if: vars.DUMP_GITHUB_CONTEXT == true
         run: |
-          echo ${{ toJson(github) }}
+          echo ${{ toJSON(github) }}
 
       - name: Dump job context
         if: vars.DUMP_JOB_CONTEXT == true
         run: |
-          echo ${{ toJson(job) }}
+          echo ${{ toJSON(job) }}
 
       - name: Setup node
         uses: actions/setup-node@v4
