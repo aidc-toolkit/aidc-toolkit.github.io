@@ -2,20 +2,21 @@ name: Build project for documentation
 
 inputs:
   project:
+    description: Project to be built
     required: true
-    type: string
   no_link:
+    description: If true, no NPM link is created
     required: false
-    type: boolean
   link_projects:
+    description: List of projects to be linked
     required: false
-    type: string
   build_parameters:
+    description: Additional build parameters
     required: false
-    type: string
 
 runs:
   using: composite
+
   steps:
     - name: Checkout ${{ inputs.project }}
       # Documentation (this) project has already been checked out and moved to the correct directory.

@@ -12,12 +12,6 @@ permissions:
   id-token: write
   pages: write
 
-env:
-  NODE_VERSION: 22
-  WRITERSIDE_INSTANCE: Writerside/doc
-  WRITERSIDE_ARTIFACT: webHelpDOC2-all
-  WRITERSIDE_DOCKER_VERSION: 243.21565
-
 jobs:
   build:
     environment:
@@ -44,7 +38,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ vars.NODE_VERSION }}
           registry-url: https://registry.npmjs.org/
 
       - name: Checkout default repository (doc)
@@ -53,9 +47,9 @@ jobs:
       - name: Build Writerside artifact
         uses: JetBrains/writerside-github-action@v4
         with:
-          instance: ${{ env.WRITERSIDE_INSTANCE }}
-          artifact: ${{ env.WRITERSIDE_ARTIFACT }}
-          docker-version: ${{ env.WRITERSIDE_DOCKER_VERSION }}
+          instance: Writerside/doc
+          artifact: webHelpDOC2-all
+          docker-version: ${{ vars.WRITERSIDE_DOCKER_VERSION }}
 
       - name: Finalize doc
         run: |
@@ -67,7 +61,7 @@ jobs:
           mv .!(|.|github) !(doc) doc/
 
           # Unzip artifact to pages directory
-          unzip -qq doc/artifacts/${{ env.WRITERSIDE_ARTIFACT }} -d pages
+          unzip -qq doc/artifacts/webHelpDOC2-all -d pages
 
       - name: Start terminal session (post doc)
         if: vars.TERMINAL_POST_DOC == 'true'
