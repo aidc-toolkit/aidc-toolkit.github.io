@@ -38,7 +38,7 @@ runs:
           npm link
         fi
 
-        # Link all dependent projects
+        # Link all dependency projects.
         for link_project in ${{ inputs.link_projects }}
         do
           npm link @aidc-toolkit/$link_project
