@@ -18,7 +18,7 @@ runs:
   using: composite
 
   steps:
-    - name: Checkout ${{ inputs.project }}
+    - name: Checkout
       # Documentation (this) project has already been checked out and moved to the correct directory.
       if: inputs.project != 'doc'
       uses: actions/checkout@v4
@@ -28,7 +28,7 @@ runs:
         ref: ${{ github.ref_name }}
         path: ${{ inputs.project }}
 
-    - name: Build ${{ inputs.project }}
+    - name: Build for documentation
       shell: bash
       working-directory: ${{ inputs.project }}
       run: |
