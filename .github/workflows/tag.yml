@@ -1,0 +1,22 @@
+name: Tag
+
+on:
+  push:
+    tags:
+      # Tags are in semantic versioning format.
+      - 'v*.*.*'
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create release
+        uses: aidc-toolkit/dev/.github/actions/create-release@main
+        with:
+          secrets: ${{ toJSON(secrets) }}
+          vars: ${{ toJSON(vars) }}
