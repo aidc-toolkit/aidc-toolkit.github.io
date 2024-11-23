@@ -13,7 +13,7 @@ permissions:
   pages: write
 
 jobs:
-  build:
+  publish:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
