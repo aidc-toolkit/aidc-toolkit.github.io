@@ -7,13 +7,13 @@
     <p>
         The <code>utility</code> package provides classes to manipulate integers and strings, independently of any AIDC
         problem domain. The package has been designed to maximize performance and minimize memory by reducing many of
-        the typical AIDC requirements, such as serial component generation, to on-demand generation using standard
-        JavaScript <code>Iterable</code>, <code>Iterator</code>, and  <code>IterableIterator</code> types.
+        the typical AIDC requirements, such as serial number generation, to on-demand generation using the JavaScript
+        <code>Iterable</code> and <code>IterableIterator</code> types.
     </p>
 
     <p>
         To provide the most flexibility and to handle the most significant demands of the AIDC problem domain, the AIDC
-        Toolkit uses the JavaScript <code>bigint</code> type, with many functions converting from the more primitive
+        Toolkit uses the JavaScript <code>bigint</code> type, with many functions converting from the lower-range
         <code>number</code> type if provided. This gives applications significant flexibility at a small performance
         cost inherent in <code>bigint</code> operations.
     </p>
@@ -91,7 +91,7 @@
                                 do {
                                     const next = sequencer.next();
 
-                                    if (next.done === undefined || !next.done) {
+                                    if (next.done !== true) {
                                         console.log(value);
                                     } else {
                                         done = true;
@@ -105,7 +105,7 @@
 
                         <step>
                             <p>
-                                Transform it using an <code>Iterator</code> method.
+                                Transform it using an <code>Iterator</code> helper method.
                             </p>
 
                             <code-block lang="typescript" noinject="true">
@@ -119,8 +119,8 @@
                             </p>
 
                             <code-block lang="typescript" noinject="true">
-                                // Generate sequence of 10-character strings.
-                                const stringSequencer = NUMERIC_STRING_CREATOR.create(10, sequencer);
+                                // Generate sequence of 10-character hexadecimal strings.
+                                const stringSequencer = HEXADECIMAL_STRING_CREATOR.create(10, sequencer);
                             </code-block>
                         </step>
                     </procedure>
@@ -158,15 +158,14 @@
 
             <p>
                 Suppose that you're manufacturing a product that is valuable enough to be of interest to counterfeiters.
-                To protect the product, you want to generate a unique serial component for each one you put on the
-                market. If anyone submits a warranty claim, the serial component will tell you whether the product is
-                legitimate.
+                To protect the product, you want to generate a unique serial number for each one you put on the market.
+                If anyone submits a warranty claim, the serial number will tell you whether the product is legitimate.
             </p>
 
             <p>
                 You expect that you will manufacture at most 1,000,000 units of the product before releasing an
-                upgrade, so your serial components are going to be numeric only and 6 digits long. If you generate the
-                serial components in sequence, then generating 10 of them starting from unit 200,000 results in the
+                upgrade, so your serial numbers are going to be numeric only and 6 digits long. If you generate the
+                serial numbers in sequence, then generating 10 of them starting from unit 200,000 results in the
                 following: 200000, 200001, 200002, 200003, 200004, 200005, 200006, 200007, 200008, 200009.
             </p>
 
@@ -185,10 +184,13 @@
             </p>
 
             <p>
-                Using the encryption transformer, you put some space between your serial components, making them 8
-                digits long, and you set the tweak to some random value. Generating 10 serial components starting from
-                unit 200,000 results in the following: 14608575, 00118914, 14609085, 00250498, 07625339, 85755635,
-                41179259, 67532896, 02000912, 19087354.
+                The first thing you need to do is put some space between your serial numbers, to make guessing
+                difficult. Let's say that in this case you make serial numbers 8 digits long, which means you have 100
+                times the capacity of serial numbers as of your expected manufacturing run. Next, you use the encryption
+                transformer, with the the tweak set to some random value (which you have to save and reuse to ensure
+                that you don't generate any duplicates). Generating 10 serial numbers starting from unit 200,000 results
+                in the following: 14608575, 00118914, 14609085, 00250498, 07625339, 85755635, 41179259, 67532896,
+                02000912, 19087354.
             </p>
 
             <code-block lang="typescript" noinject="true">
@@ -208,7 +210,7 @@
             <p>
                 The <code>Transformer</code> class underlies most AIDC Toolkit operations involved in string creation.
                 The <code>forward()</code> method takes either a single <code>bigint</code> value or an
-                <code>Iterable%lt;bigint&gt;</code> of values. This provides maximum flexibility, but it comes at a
+                <code>Iterable&lt;bigint&gt;</code> of values. This provides maximum flexibility, but it comes at a
                 cost. All inputs are validated prior to transformation, which can add to the system load when
                 transforming a large number of values.
             </p>
@@ -260,7 +262,8 @@
                 <code>CharacterSetValidator</code></a> implementation accepts a
                 <a href="%gitHubPagesBase%/api/interfaces/Utility.CharacterSetValidation.html">
                 <code>CharacterSetValidation</code></a> object that can constrain the length and limit the way numeric
-                values are expressed (e.g., exclude zero as the first character).
+                values are expressed (e.g., exclude zero as the first character or exclude strings that are all
+                numeric).
             </p>
 
             <p>
@@ -345,7 +348,7 @@
                     create multiple strings.
                 </li>
                 <li>
-                    If the value to create a string is of type <code>bigint</code>:
+                    If the value to create a string is numeric (<code>number</code> or <code>bigint</code>):
                     <list>
                         <li>
                             The method uses a <a href="#transformer">transformer</a> and supports sparse creation.
@@ -372,9 +375,9 @@
                     <tr>
                         <td>Character set</td>
                         <td>
-                            Creates strings by mapping <code>bigint</code> values to fixed length string representations
-                            using the character set as the "digits" of the string. Predefined character set creators
-                            are:
+                            Creates strings by mapping numeric (<code>number</code> and <code>bigint</code>) values to
+                            fixed-length string representations using the character set as the "digits" of the string.
+                            Predefined character set creators are:
                             <list>
                                 <li>
                                     Numeric (0-9)
@@ -393,6 +396,16 @@
                     </tr>
                 </table>
             </chapter>
+
+            <chapter title="Output restriction" id="output-restriction">
+                <p>
+                    As with string validators, string creators can restrict their output to meet the needs of certain
+                    use cases. For example, when creating serial numbers, it may be necessary to generate values that
+                    either don't start with a zero (to prevent leading zeros from being dropped by other applications)
+                    or that aren't composed entirely of digits (to prevent strings from being interpreted as numbers).
+                </p>
+            </chapter>
+
         </chapter>
     </chapter>
 </topic>
