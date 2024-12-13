@@ -1,12 +1,13 @@
 name: Publish to GitHub Pages
 
 on:
-  release:
-    types:
-      - published
+  workflow_dispatch:
   push:
     branches:
       - main
+  release:
+    types:
+      - published
 
 permissions:
   id-token: write
@@ -21,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout default repository (doc) with tags
-        if: github.event_name == 'push'
+        if: github.event_name != 'release'
         uses: actions/checkout@v4
         with:
           fetch-tags: 'true'
@@ -29,15 +30,15 @@ jobs:
       - name: Check event
         id: check-event
         run: |
-          if [ "${{ github.event_name }}" == "push" ]
+          if [ "${{ github.event_name }}" != "release" ]
           then
             # Publish will be skipped if it has a tag that matches the version format.
             if [ `git tag --points-at HEAD "v*.*.*" | wc -l` -eq 0 ]
             then
-              echo "Push to main without version tag - publish will run"
+              echo "Non-release without version tag - publish will run"
               run_publish=true
             else
-              echo "Push to main with version tag - publish will not run"
+              echo "Non-release with version tag - publish will not run"
               run_publish=false
             fi
           else
@@ -173,7 +174,7 @@ jobs:
           unzip -qq pages.zip -d preview
 
       - name: Restore release
-        if: github.event_name == 'push'
+        if: github.event_name != 'release'
         run: |
           # Enable glob expansion.
           shopt -s extglob nullglob
