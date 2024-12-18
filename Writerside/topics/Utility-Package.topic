@@ -19,7 +19,7 @@
     </p>
 
     <chapter title="Integers" id="integers">
-        <chapter title="Sequencer" id="sequencer">
+        <chapter title="Sequence" id="sequence">
             <p>
                 Many of AIDC processes can be reduced to a simple statement about sequences:
             </p>
@@ -39,67 +39,44 @@
             <p>
                 Each statement has a quantity and an output. Implicit in them, however, is the requirement that the
                 generated output be unique, not only within itself, but also within any previous outputs generated. A
-                sequencer is simply a utility to generate a sequence of integers given a start value and a count.
+                sequence is simply a utility to generate a sequence of integers given a start value and a count.
             </p>
 
             <tip>
-                The AIDC Toolkit is not responsible for maintaining the history of any sequencer. It is up to the
+                The AIDC Toolkit is not responsible for maintaining the history of any sequence. It is up to the
                 application to ensure that the start value and count don't overlap with any other start value and count
-                for a sequencer used for the same purpose.
+                for a sequence used for the same purpose.
             </tip>
 
-            <procedure title="Creating and using a sequencer" id="creating-and-using-a-sequencer">
+            <procedure title="Creating and using a sequence" id="creating-and-using-a-sequence">
                 <step>
                     <p>
-                        Create a sequencer with a start value and a count. The count is typically positive, which means
-                        that the sequencer runs from the start value up. If negative, the sequencer runs from the start
+                        Create a sequence with a start value and a count. The count is typically positive, which means
+                        that the sequence runs from the start value up. If negative, the sequence runs from the start
                         value down.
                     </p>
 
                     <code-block lang="typescript" noinject="true">
-                        // Sequencer starts at 33,000 and will iterate 1,000 times.
-                        const sequencer = new Sequencer(33000, 1000);
+                        // Sequence starts at 33,000 and will iterate 1,000 times.
+                        const sequence = new Sequence(33000, 1000);
                     </code-block>
                 </step>
 
                 <step>
                     <p>
-                        Use the sequencer.
+                        Use the sequence.
                     </p>
 
-                    <procedure id="using-a-sequencer" type="choices">
+                    <procedure id="using-a-sequence" type="choices">
                         <step>
                             <p>
                                 Use it in a <code>for</code> loop.
                             </p>
 
                             <code-block lang="typescript" noinject="true">
-                                for (const value of sequencer) {
+                                for (const value of sequence) {
                                     console.log(value);
                                 }
-                            </code-block>
-                        </step>
-
-                        <step>
-                            <p>
-                                Use it as an <code>Iterator</code>.
-                            </p>
-
-                            <code-block lang="typescript" noinject="true">
-                                let done = false;
-
-                                do {
-                                    const next = sequencer.next();
-
-                                    if (next.done !== true) {
-                                        console.log(value);
-                                    } else {
-                                        done = true;
-
-                                        // Sequencer returns absolute value of count when iterator is exhausted.
-                                        console.log(`Total generated is ${next.value}`);
-                                    }
-                                } while (!done);
                             </code-block>
                         </step>
 
@@ -109,7 +86,7 @@
                             </p>
 
                             <code-block lang="typescript" noinject="true">
-                                const sum = Iterator.from(sequencer).reduce((accumulator, value) => accumulator + value, 0);
+                                const sum = Iterator.from(sequence).reduce((accumulator, value) => accumulator + value, 0);
                             </code-block>
                         </step>
 
@@ -120,7 +97,7 @@
 
                             <code-block lang="typescript" noinject="true">
                                 // Generate sequence of 10-character hexadecimal strings.
-                                const stringSequencer = HEXADECIMAL_STRING_CREATOR.create(10, sequencer);
+                                const stringSequence = HEXADECIMAL_STRING_CREATOR.create(10, sequence);
                             </code-block>
                         </step>
                     </procedure>
@@ -171,7 +148,7 @@
 
             <code-block lang="typescript" noinject="true">
                 // Transformer has a domain of 1,000,000; no tweak means that the identity transformer is used.
-                for (const value of Transformer.get(1000000).forward(new Sequencer(200000, 10))) {
+                for (const value of Transformer.get(1000000).forward(new Sequence(200000, 10))) {
                     console.log(value);
                 }
             </code-block>
@@ -195,7 +172,7 @@
 
             <code-block lang="typescript" noinject="true">
                 // Transformer has a domain of 100,000,000; tweak means that the encryption transformer is used.
-                for (const value of Transformer.get(100000000, 8675309).forward(new Sequencer(200000, 10))) {
+                for (const value of Transformer.get(100000000, 8675309).forward(new Sequence(200000, 10))) {
                     console.log(value);
                 }
             </code-block>
@@ -206,7 +183,7 @@
             </p>
         </chapter>
 
-        <chapter title="Sequencer and Transformer" id="sequencer-and-transformer">
+        <chapter title="Sequence and Transformer" id="sequence-and-transformer">
             <p>
                 The <code>Transformer</code> class underlies most AIDC Toolkit operations involved in string creation.
                 The <code>forward()</code> method takes either a single <code>bigint</code> value or an
@@ -216,9 +193,9 @@
             </p>
 
             <p>
-                When dealing with <code>Iterable</code> objects, transformers will recognize <code>Sequencer</code>
-                objects and will validate the start value and count at the beginning rather than each value individually
-                as they are transformed. This reduces the number of validations from however many entries there are in
+                When dealing with <code>Iterable</code> objects, transformers will recognize <code>Sequence</code>
+                objects and validate the start value and count at the beginning rather than each value individually as
+                they are transformed. This reduces the number of validations from however many entries there are in an
                 <code>Iterable</code> object to two. It also ensures that the client code deals with errors at the very
                 beginning rather than in the middle of its processing.
             </p>
@@ -230,14 +207,14 @@
                             ValidateSingleValue --> ProcessSingleValue[[Process value]]
                             ProcessSingleValue --> Return["Return result(s)"]
                         ValueOrValuesType -->|Iterable| IterableType{Iterable type}
-                            IterableType -->|Sequencer| ValidateMinimumValue{{Validate minimum value}}
+                            IterableType -->|Sequence| ValidateMinimumValue{{Validate minimum value}}
                                 ValidateMinimumValue --> ValidateMaximumValue{{Validate maximum value}}
-                                ValidateMaximumValue --> ForEachSequencerValue[/For each value\]
-                                ForEachSequencerValue --> ProcessSequencerValue[[Process value]]
-                                    ProcessSequencerValue --> NextSequencerValue[\Next/]
-                                NextSequencerValue -->|Not done| ProcessSequencerValue
-                                NextSequencerValue -->|Done| Return
-                            IterableType -->|Not Sequencer| ForEachIterableValue[/For each value\]
+                                ValidateMaximumValue --> ForEachSequenceValue[/For each value\]
+                                ForEachSequenceValue --> ProcessSequenceValue[[Process value]]
+                                    ProcessSequenceValue --> NextSequenceValue[\Next/]
+                                NextSequenceValue -->|Not done| ProcessSequenceValue
+                                NextSequenceValue -->|Done| Return
+                            IterableType -->|Not Sequence| ForEachIterableValue[/For each value\]
                                 ForEachIterableValue --> ValidateIterableValue{{Validate value}}
                                     ValidateIterableValue --> ProcessIterableValue[[Process value]]
                                     ProcessIterableValue --> NextIterableValue[\Next/]
@@ -354,8 +331,8 @@
                             The method uses a <a href="#transformer">transformer</a> and supports sparse creation.
                         </li>
                         <li>
-                            Because of this, passing in a <a href="#sequencer">sequencer</a> is
-                            <a href="#sequencer-and-transformer">strongly recommended</a> when creating multiple
+                            Because of this, passing in a <a href="#sequence">sequence</a> is
+                            <a href="#sequence-and-transformer">strongly recommended</a> when creating multiple
                             strings.
                         </li>
                     </list>
