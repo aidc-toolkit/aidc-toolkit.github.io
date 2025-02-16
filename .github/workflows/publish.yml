@@ -116,26 +116,21 @@ jobs:
         uses: ./.github/actions/build-project-doc
         with:
           project: core
-          link_projects: dev
 
       - name: Build utility
         uses: ./.github/actions/build-project-doc
         with:
           project: utility
-          link_projects: dev core
 
       - name: Build gs1
         uses: ./.github/actions/build-project-doc
         with:
           project: gs1
-          link_projects: dev core utility
 
       - name: Build demo
         uses: ./.github/actions/build-project-doc
         with:
           project: demo
-          no_link: true
-          link_projects: dev core utility gs1
           build_parameters: --outDir ../pages/demo
 
       - name: Start terminal session (post build)
@@ -146,8 +141,6 @@ jobs:
         uses: ./.github/actions/build-project-doc
         with:
           project: doc
-          no_link: true
-          link_projects: dev
           build_parameters: --out ../pages/api
 
       - name: Create repository state file
