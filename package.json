@@ -17,7 +17,7 @@
   },
   "scripts": {
     "copy-resources": "copy-files-from-to --config copy-resources.json",
-    "build-doc": "typedoc"
+    "build:dev": "typedoc"
   },
   "devDependencies": {
     "@aidc-toolkit/dev": "^0.9.13-beta",
