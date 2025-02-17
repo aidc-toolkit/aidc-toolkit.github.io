@@ -28,5 +28,5 @@ runs:
       run: |
         npm install
 
-        # All projects have build:dev script.
-        npm run build:dev -- ${{ inputs.build_parameters }}
+        # All projects have build:doc script.
+        npm run build:doc -- ${{ inputs.build_parameters }}

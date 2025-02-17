@@ -16,8 +16,9 @@
     "url": "https://www.linkedin.com/in/kdean"
   },
   "scripts": {
+    "update-aidc-toolkit": "npm update @aidc-toolkit/dev",
     "copy-resources": "copy-files-from-to --config copy-resources.json",
-    "build:dev": "typedoc"
+    "build:doc": "typedoc"
   },
   "devDependencies": {
     "@aidc-toolkit/dev": "^0.9.13-beta",
