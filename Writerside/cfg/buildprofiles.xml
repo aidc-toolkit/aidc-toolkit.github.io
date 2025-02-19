@@ -6,8 +6,8 @@
     <build-profile instance="doc">
         <variables>
             <noindex-content>false</noindex-content>
-            <custom-favicons>icon-144.png</custom-favicons>
-            <header-logo>icon-144.png</header-logo>
+            <custom-favicons>icon-128.png</custom-favicons>
+            <header-logo>icon-128.png</header-logo>
             <download-title>Join us on GitHub</download-title>
             <download-page>https://github.com/aidc-toolkit</download-page>
             <showDownloadButton>true</showDownloadButton>
