@@ -4,7 +4,7 @@
   "description": "Documentation for AIDC Toolkit",
   "type": "module",
   "private": true,
-  "homepage": "https://github.com/aidc-toolkit",
+  "homepage": "https://aidc-toolkit.com/",
   "repository": "github:aidc-toolkit/doc",
   "bugs": {
     "url": "https://github.com/aidc-toolkit/doc/issues"
