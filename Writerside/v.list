@@ -4,7 +4,7 @@
     <var name="product" value="AIDC Toolkit" />
     <var name="gitHubBase" value="https://github.com/aidc-toolkit" />
     <var name="gitHubOrgBase" value="https://github.com/orgs/aidc-toolkit" />
-    <var name="gitHubPagesBase" value="https://aidc-toolkit.github.io" />
+    <var name="gitHubPagesBase" value="https://aidc-toolkit.com" />
     <var name="jsBase" value="https://developer.mozilla.org/en-US/docs/Web/JavaScript" />
     <var name="tsHandbookBase" value="https://www.typescriptlang.org/docs/handbook" />
 </vars>

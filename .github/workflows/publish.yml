@@ -178,7 +178,7 @@ jobs:
           mv .!(|.) !(preview) preview/
 
           # Get and unzip release version.
-          curl -s https://aidc-toolkit.github.io/pages.zip -o pages.zip
+          curl -s https://aidc-toolkit.com/pages.zip -o pages.zip
           unzip -qq pages.zip
 
       - name: Start terminal session (post release)
@@ -188,7 +188,7 @@ jobs:
       - name: Patch preview
         run: |
           cd pages/preview
-          find . -name "*.html" -print0 | xargs -0 sed -i -e 's/https:\/\/aidc-toolkit.github.io/https:\/\/aidc-toolkit.github.io\/preview/g'
+          find . -name "*.html" -print0 | xargs -0 sed -i -e 's/https:\/\/aidc-toolkit.com/https:\/\/aidc-toolkit.com\/preview/g'
 
       - name: Start terminal session (post patch)
         if: vars.TERMINAL_POST_PATCH == 'true'
