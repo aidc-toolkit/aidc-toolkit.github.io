@@ -1,6 +1,6 @@
 {
   "name": "@aidc-toolkit/doc",
-  "version": "0.9.15-beta",
+  "version": "0.9.16-beta",
   "description": "Documentation for AIDC Toolkit",
   "type": "module",
   "private": true,
@@ -21,7 +21,7 @@
     "build:doc": "typedoc"
   },
   "devDependencies": {
-    "@aidc-toolkit/dev": "^0.9.15-beta",
+    "@aidc-toolkit/dev": "^0.9.16-beta",
     "copy-files-from-to": "^3.12.1",
     "typedoc": "^0.27.9",
     "typedoc-github-theme": "^0.2.1",
