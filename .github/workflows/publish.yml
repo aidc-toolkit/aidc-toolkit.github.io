@@ -30,10 +30,10 @@ jobs:
       - name: Check event
         id: check-event
         run: |
-          if [ "${{ github.event_name }}" != "release" ]
+          if [[ "${{ github.event_name }}" != "release" ]]
           then
             # Publish will be skipped if it has a tag that matches the version format.
-            if [ `git tag --points-at HEAD "v*.*.*" | wc -l` -eq 0 ]
+            if [[ `git tag --points-at HEAD "v*.*.*" | wc -l` -eq 0 ]]
             then
               echo "Non-release without version tag - publish will run"
               run_publish=true
