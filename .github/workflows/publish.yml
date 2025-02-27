@@ -24,12 +24,13 @@ jobs:
       - name: Checkout default repository (doc) with tags
         if: github.event_name != 'release'
         uses: actions/checkout@v4
-        with:
-          fetch-tags: 'true'
 
       - name: Check event
         id: check-event
         run: |
+          # Get the tags for the branch; fetch-tags on checkout not working.
+          git fetch
+
           if [[ "${{ github.event_name }}" != "release" ]]
           then
             # Publish will be skipped if it has a tag that matches the version format.
