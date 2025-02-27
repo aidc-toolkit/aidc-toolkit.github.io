@@ -28,11 +28,11 @@ jobs:
       - name: Check event
         id: check-event
         run: |
-          # Get the tags for the branch; fetch-tags on checkout not working.
-          git fetch
-
           if [[ "${{ github.event_name }}" != "release" ]]
           then
+            # Get the tags for the branch; fetch-tags on checkout not working.
+            git fetch
+  
             # Publish will be skipped if it has a tag that matches the version format.
             if [[ `git tag --points-at HEAD "v*.*.*" | wc -l` -eq 0 ]]
             then
