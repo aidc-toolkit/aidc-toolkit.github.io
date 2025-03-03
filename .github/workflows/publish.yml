@@ -85,10 +85,10 @@ jobs:
       - name: Checkout default repository (doc)
         uses: actions/checkout@v4
 
-      - name: Create .idea directory
+      - name: Create .idea and artifacts directories
         run: |
-          # Create .idea directory; will be created by Writerside as root otherwise.
-          mkdir .idea
+          # Create .idea and artifacts directories; will be created by Writerside as root otherwise.
+          mkdir .idea artifacts
 
       - name: Build Writerside artifact
         uses: JetBrains/writerside-github-action@v4
