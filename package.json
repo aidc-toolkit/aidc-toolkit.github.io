@@ -24,7 +24,7 @@
     "copy-files-from-to": "^3.12.1",
     "typedoc": "^0.27.9",
     "typedoc-github-theme": "^0.2.1",
-    "typedoc-plugin-mdn-links": "^4.0.14",
-    "typescript": "^5.7.3"
+    "typedoc-plugin-mdn-links": "^5.0.1",
+    "typescript": "^5.8.2"
   }
 }
