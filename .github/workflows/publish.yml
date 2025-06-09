@@ -5,56 +5,14 @@ on:
   push:
     branches:
       - main
-  release:
-    types:
-      - published
+      - v*
 
 permissions:
   id-token: write
   pages: write
 
 jobs:
-  check-event:
-    runs-on: ubuntu-latest
-
-    outputs:
-      run-publish: ${{ steps.check-event.outputs.run-publish }}
-
-    steps:
-      - name: Checkout default repository (doc) with tags
-        if: github.event_name != 'release'
-        uses: actions/checkout@v4
-
-      - name: Check event
-        id: check-event
-        run: |
-          if [[ "${{ github.event_name }}" != "release" ]]
-          then
-            # Get the tags for the branch; fetch-tags on checkout not working.
-            git fetch
-  
-            # Publish will be skipped if it has a tag that matches the version format.
-            if [[ `git tag --points-at HEAD "v*.*.*" | wc -l` -eq 0 ]]
-            then
-              echo "Non-release without version tag - publish will run"
-              run_publish=true
-            else
-              echo "Non-release with version tag - publish will not run"
-              run_publish=false
-            fi
-          else
-            # Publish is always run on release.
-            echo "Release - publish will run"
-            run_publish=true
-          fi
-          
-          echo run-publish=$run_publish >> "$GITHUB_OUTPUT"
-
   publish:
-    needs: check-event
-
-    if: needs.check-event.outputs.run-publish == 'true'
-
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -165,19 +123,19 @@ jobs:
         if: vars.TERMINAL_POST_API == 'true'
         uses: mxschmitt/action-tmate@v3
 
-      - name: Save release
-        if: github.event_name == 'release'
+      - name: Save main
+        if: github.ref_name == 'main'
         run: |
           # Create pages.zip in root directory then move to pages directory.
           cd pages
           zip -q -r ../pages .
           mv ../pages.zip .
 
-          # Release is its own preview.
+          # Push to main is its own preview.
           unzip -qq pages.zip -d preview
 
-      - name: Restore release
-        if: github.event_name != 'release'
+      - name: Restore main
+        if: github.ref_name != 'main'
         run: |
           # Enable glob expansion.
           shopt -s extglob nullglob
@@ -187,12 +145,12 @@ jobs:
           mkdir preview
           mv .!(|.) !(preview) preview/
 
-          # Get and unzip release version.
+          # Get and unzip main version.
           curl -s https://aidc-toolkit.com/pages.zip -o pages.zip
           unzip -qq pages.zip
 
-      - name: Start terminal session (post release)
-        if: vars.TERMINAL_POST_RELEASE == 'true'
+      - name: Start terminal session (post zip)
+        if: vars.TERMINAL_POST_ZIP == 'true'
         uses: mxschmitt/action-tmate@v3
 
       - name: Patch preview
