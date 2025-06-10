@@ -12,14 +12,24 @@ runs:
   using: composite
 
   steps:
+    - name: Latest tag
+      id: latest-tag
+      # Documentation (this) project has already been checked out and moved to the correct directory.
+      if: inputs.project != 'doc'
+      shell: bash
+      run: |
+        TAG=`git ls-remote --tags --sort=committerdate aidc-toolkit/${{ inputs.project }} | grep -o -E 'v\d+\.\d+\.\d+.*' | tail -1`
+        echo "Latest tag is TAG"
+        echo "TAG=$tag" >> $GITHUB_OUTPUT
+
     - name: Checkout
       # Documentation (this) project has already been checked out and moved to the correct directory.
       if: inputs.project != 'doc'
       uses: actions/checkout@v4
       with:
         repository: aidc-toolkit/${{ inputs.project }}
-        # Get the matching reference.
-        ref: ${{ github.ref_name }}
+        # Get the latest tag.
+        ref: ${{ steps.latest-tag.outputs.TAG }}
         path: ${{ inputs.project }}
 
     - name: Build for documentation
