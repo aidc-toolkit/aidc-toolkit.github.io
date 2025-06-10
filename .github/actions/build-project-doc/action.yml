@@ -19,8 +19,8 @@ runs:
       shell: bash
       run: |
         TAG=`git ls-remote --refs ${{ github.server_url }}/aidc-toolkit/${{ inputs.project }}.git | grep -o -E "v[0-9]+\.[0-9]+\.[0-9]+.*" | sort -V | tail -1`
-        echo "Latest tag is TAG"
-        echo "TAG=$tag" >> $GITHUB_OUTPUT
+        echo "Latest tag is $TAG"
+        echo "TAG=$TAG" >> $GITHUB_OUTPUT
 
     - name: Checkout
       # Documentation (this) project has already been checked out and moved to the correct directory.
