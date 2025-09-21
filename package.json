@@ -1,6 +1,6 @@
 {
   "name": "@aidc-toolkit/doc",
-  "version": "0.9.18-beta",
+  "version": "0.9.18",
   "description": "Documentation for AIDC Toolkit",
   "type": "module",
   "private": true,
