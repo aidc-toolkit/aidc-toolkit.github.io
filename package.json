@@ -1,6 +1,6 @@
 {
   "name": "@aidc-toolkit/doc",
-  "version": "0.9.18",
+  "version": "0.9.19-alpha",
   "description": "Documentation for AIDC Toolkit",
   "type": "module",
   "private": true,
@@ -22,9 +22,9 @@
   "devDependencies": {
     "@aidc-toolkit/dev": "alpha",
     "copy-files-from-to": "^3.12.1",
-    "typedoc": "^0.28.5",
-    "typedoc-github-theme": "^0.3.0",
-    "typedoc-plugin-mdn-links": "^5.0.2",
-    "typescript": "^5.8.3"
+    "typedoc": "^0.28.13",
+    "typedoc-github-theme": "^0.3.1",
+    "typedoc-plugin-mdn-links": "^5.0.9",
+    "typescript": "^5.9.2"
   }
 }
