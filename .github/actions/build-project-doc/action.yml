@@ -4,6 +4,9 @@ inputs:
   project:
     description: Project to be built
     required: true
+  ref:
+    description: Project reference to checkout
+    required: true
   build_parameters:
     description: Additional build parameters
     required: false

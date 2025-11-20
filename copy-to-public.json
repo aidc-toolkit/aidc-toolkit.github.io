@@ -1,0 +1,19 @@
+{
+  "copyFiles": [
+    {
+      "from": [
+        "../core/resource/icon-256.png",
+        "../core/resource/icon-512.png"
+      ],
+      "to": "site/public/resource/"
+    },
+    {
+      "from": "../demo/dist/**/*",
+      "to": "site/public/demo/"
+    }
+  ],
+
+  "copyFilesSettings": {
+    "whenFileExists": "overwrite"
+  }
+}

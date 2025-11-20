@@ -1,11 +1,10 @@
 name: Publish to GitHub Pages
 
 on:
-  workflow_dispatch:
   push:
     branches:
-      - main
       - v*
+  release:
 
 permissions:
   id-token: write
@@ -34,6 +33,32 @@ jobs:
           ${{ toJSON(github) }}
           EOF
 
+      - name: Setup branch
+        id: setup-branch
+        run: |
+          if [[ "${{ github.event_name }}" = "push" ]]
+          then
+            # Ref for push event is the branch.
+            ref="${{ github.ref }}"
+            base="/preview/"
+          else
+            # Ref for release event is the tag.
+            ref=`echo ${{ github.ref }} | sed -e 's/^refs\/tags\/\(v[0-9]*\.[0-9]*\)\..*$/refs\/heads\/\1/'`
+            base="/"
+          fi
+          
+          # Create repository state file
+          cat > doc/public/repository.txt << EOF
+          Date: `date`
+          Branch reference: $ref
+          Publication base: $base
+          EOF
+
+          cat doc/public/repository.txt
+          
+          echo "ref=ref" >> $GITHUB_OUTPUT
+          echo "$base=$base" >> $GITHUB_OUTPUT
+
       - name: Setup node
         uses: actions/setup-node@v4
         with:
@@ -42,124 +67,87 @@ jobs:
 
       - name: Checkout default repository (doc)
         uses: actions/checkout@v4
-
-      - name: Create .idea and artifacts directories
-        run: |
-          # Create .idea and artifacts directories; will be created by Writerside as root otherwise.
-          mkdir .idea artifacts
-
-      - name: Build Writerside artifact
-        uses: JetBrains/writerside-github-action@v4
         with:
-          instance: Writerside/doc
-          artifact: webHelpDOC2-all
-          docker-version: ${{ vars.WRITERSIDE_DOCKER_VERSION }}
+          path: doc
 
-      - name: Start terminal session (post doc)
-        if: vars.TERMINAL_POST_DOC == 'true'
-        uses: mxschmitt/action-tmate@v3
-
-      - name: Finalize doc
+      - name: Move .github
         run: |
-          # Enable glob expansion.
-          shopt -s extglob nullglob
+          # Move .github to root to make actions accessible.
+          mv doc/.github .
 
-          # Move all except .github to doc directory.
-          mkdir doc
-          mv .!(|.|github) !(doc) doc/
-
-          # Unzip artifact to pages directory
-          unzip -qq doc/artifacts/webHelpDOC2-all -d pages
-
-      - name: Start terminal session (post doc)
-        if: vars.TERMINAL_POST_FINALIZE == 'true'
+      - name: Start terminal session (pre build)
+        if: vars.TERMINAL_PRE_BUILD == 'true'
         uses: mxschmitt/action-tmate@v3
 
       - name: Build dev
         uses: ./.github/actions/build-project-doc
         with:
           project: dev
+          ref: ${{ steps.setup-branch.outputs.ref }}
 
       - name: Build core
         uses: ./.github/actions/build-project-doc
         with:
           project: core
+          ref: ${{ steps.setup-branch.outputs.ref }}
 
       - name: Build utility
         uses: ./.github/actions/build-project-doc
         with:
           project: utility
+          ref: ${{ steps.setup-branch.outputs.ref }}
 
       - name: Build gs1
         uses: ./.github/actions/build-project-doc
         with:
           project: gs1
+          ref: ${{ steps.setup-branch.outputs.ref }}
 
       - name: Build demo
         uses: ./.github/actions/build-project-doc
         with:
           project: demo
-          build_parameters: --outDir ../pages/demo
+          ref: ${{ steps.setup-branch.outputs.ref }}
+
+      - name: Build doc
+        uses: ./.github/actions/build-project-doc
+        with:
+          project: doc
+          ref: ${{ steps.setup-branch.outputs.ref }}
+          build_parameters: --base ${{ steps.setup-branch.outputs.base }}
 
       - name: Start terminal session (post build)
         if: vars.TERMINAL_POST_BUILD == 'true'
         uses: mxschmitt/action-tmate@v3
 
-      - name: Generate API documentation
-        uses: ./.github/actions/build-project-doc
-        with:
-          project: doc
-          build_parameters: --out ../pages/api
-
-      - name: Create repository state file
+      - name: Save release
+        if: github.event_name == 'release'
         run: |
-          cat > pages/repository.txt << EOF
-          Date: `date`
-          Ref: $GITHUB_REF
-          Commit: $GITHUB_SHA
-          EOF
+          # Create pages.zip in root directory then move to publication directory.
+          cd doc/.vitepress/dist
+          zip -q -r ../../../pages .
+          mv ../../../pages.zip .
 
-      - name: Start terminal session (post API)
-        if: vars.TERMINAL_POST_API == 'true'
-        uses: mxschmitt/action-tmate@v3
-
-      - name: Save main
-        if: github.ref_name == 'main'
-        run: |
-          # Create pages.zip in root directory then move to pages directory.
-          cd pages
-          zip -q -r ../pages .
-          mv ../pages.zip .
-
-          # Push to main is its own preview.
-          unzip -qq pages.zip -d preview
-
-      - name: Restore main
-        if: github.ref_name != 'main'
+      - name: Restore release
+        if: github.event_name != 'release'
         run: |
           # Enable glob expansion.
           shopt -s extglob nullglob
 
-          # Move pages to pages/preview directory.
-          cd pages
+          # Move content to preview directory.
+          cd doc/.vitepress/dist
           mkdir preview
           mv .!(|.) !(preview) preview/
+          
+          # Patch preview.
+          find preview -name "*.html" -print0 | xargs -0 sed -i -e 's/https:\/\/aidc-toolkit.com/https:\/\/aidc-toolkit.com\/preview/g'
 
-          # Get and unzip main version.
+          # Get and unzip release version.
           curl -s https://aidc-toolkit.com/pages.zip -o pages.zip
           unzip -qq pages.zip
 
       - name: Start terminal session (post zip)
         if: vars.TERMINAL_POST_ZIP == 'true'
-        uses: mxschmitt/action-tmate@v3
-
-      - name: Patch preview
-        run: |
-          cd pages/preview
-          find . -name "*.html" -print0 | xargs -0 sed -i -e 's/https:\/\/aidc-toolkit.com/https:\/\/aidc-toolkit.com\/preview/g'
-
-      - name: Start terminal session (post patch)
-        if: vars.TERMINAL_POST_PATCH == 'true'
         uses: mxschmitt/action-tmate@v3
 
       - name: Configure GitHub Pages
@@ -168,7 +156,7 @@ jobs:
       - name: Upload pages directory
         uses: actions/upload-pages-artifact@v3
         with:
-          path: pages
+          path: doc/.vitepress/dist
 
       - name: Deploy to GitHub Pages
         id: deployment

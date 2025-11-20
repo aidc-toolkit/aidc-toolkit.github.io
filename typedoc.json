@@ -2,7 +2,8 @@
   "$schema": "https://typedoc.org/schema.json",
   "plugin": [
     "typedoc-plugin-mdn-links",
-    "typedoc-github-theme"
+    "typedoc-plugin-markdown",
+    "typedoc-vitepress-theme"
   ],
   "name": "AIDC Toolkit",
   "entryPoints": [
@@ -12,8 +13,11 @@
   ],
   "entryPointStrategy": "packages",
   "includeVersion": true,
-  "out": "api",
-  "theme": "typedoc-github-theme",
+  "docsRoot": "site",
+  "out": "site/api",
+  "sidebar": {
+    "pretty": true
+  },
   "sourceLinkExternal": true,
   "titleLink": "https://aidc-toolkit.com"
 }

@@ -16,15 +16,20 @@
     "url": "https://www.linkedin.com/in/kdean"
   },
   "scripts": {
-    "copy-resources": "copy-files-from-to --config copy-resources.json",
-    "build:doc": "typedoc"
+    "lint": "eslint",
+    "copy-to-public": "rimraf site/public && copy-files-from-to --config copy-to-public.json",
+    "build:doc": "npm run copy-to-public && typedoc && vitepress build $*",
+    "server": "vitepress dev",
+    "server-preview": "npm run build:doc && vitepress preview"
   },
   "devDependencies": {
     "@aidc-toolkit/dev": "alpha",
     "copy-files-from-to": "^3.12.1",
-    "typedoc": "^0.28.13",
-    "typedoc-github-theme": "^0.3.1",
+    "rimraf": "^6.1.0",
+    "typedoc": "^0.28.11",
+    "typedoc-plugin-markdown": "^4.8.1",
     "typedoc-plugin-mdn-links": "^5.0.9",
-    "typescript": "^5.9.2"
+    "typedoc-vitepress-theme": "^1.1.2",
+    "vitepress": "next"
   }
 }

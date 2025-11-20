@@ -1,0 +1,14 @@
+{
+  "extends": "@aidc-toolkit/dev/tsconfig.json",
+  "compilerOptions": {
+    // Emit.
+    "noEmit": true,
+
+    // Interop constraints.
+    "isolatedModules": true,
+
+    // Language and environment.
+    "moduleDetection": "force"
+  },
+  "include": [".vitepress/config.mts"]
+}

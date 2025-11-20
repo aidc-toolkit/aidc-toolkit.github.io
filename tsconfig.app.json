@@ -1,0 +1,20 @@
+{
+  "extends": "@aidc-toolkit/dev/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "lib": ["DOM", "DOM.Iterable"],
+
+    // Modules.
+    "allowImportingTsExtensions": true,
+
+    // Emit.
+    "noEmit": true,
+
+    // Interop constraints.
+    "isolatedModules": true,
+
+    // Language and environment.
+    "moduleDetection": "force",
+    "jsx": "react-jsx"
+  }
+}
