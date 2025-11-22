@@ -24,12 +24,17 @@
   },
   "devDependencies": {
     "@aidc-toolkit/dev": "alpha",
-    "copy-files-from-to": "^3.12.1",
-    "rimraf": "^6.1.0",
-    "typedoc": "^0.28.11",
-    "typedoc-plugin-markdown": "^4.8.1",
-    "typedoc-plugin-mdn-links": "^5.0.9",
+    "copy-files-from-to": "^3.13.0",
+    "rimraf": "^6.1.2",
+    "typedoc": "^0.28.14",
+    "typedoc-plugin-markdown": "^4.9.0",
+    "typedoc-plugin-mdn-links": "^5.0.10",
     "typedoc-vitepress-theme": "^1.1.2",
     "vitepress": "next"
+  },
+  "dependencies": {
+    "@aidc-toolkit/app-extension": "alpha",
+    "@aidc-toolkit/app-generator": "alpha",
+    "@aidc-toolkit/core": "alpha"
   }
 }
