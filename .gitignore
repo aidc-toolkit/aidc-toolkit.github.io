@@ -5,3 +5,5 @@
 /.vitepress/dist/
 /site/public/
 /site/api/
+/site/app-extension/
+/site/fr/app-extension/
