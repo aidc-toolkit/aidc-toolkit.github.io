@@ -1,17 +1,31 @@
 /* eslint-disable no-console -- Console application. */
 
 import {
-    appExtensionNS,
-    expandParameterDescriptor,
-    type MethodDescriptor,
-    Type
-} from "@aidc-toolkit/app-extension";
-import { Generator } from "@aidc-toolkit/app-generator";
+    Generator,
+    type Localization,
+    type ProxyFunctionDescriptor,
+    type ProxyObjectDescriptor
+} from "@aidc-toolkit/app-generator";
 import { I18nEnvironment } from "@aidc-toolkit/core";
 import type { ParseKeys } from "i18next";
 import fs from "node:fs";
 import type { DefaultTheme } from "vitepress/theme";
-import { docResources, i18nDocInit, i18nextDoc } from "./locale/i18n.ts";
+import { type DocLocaleStrings, docResources, i18nDocInit, i18nextDoc } from "./locale/i18n.ts";
+
+/**
+ * Documentation as structured in locale strings.
+ */
+type Documentation = DocLocaleStrings["Documentation"];
+
+/**
+ * Documentation resource.
+ */
+interface DocumentationResource extends Documentation {
+    /**
+     * Locale.
+     */
+    locale: string;
+}
 
 /**
  * Parameter documentation.
@@ -37,14 +51,33 @@ interface ParameterDocumentation {
  * Generator for documentation.
  */
 class DocumentationGenerator extends Generator {
-    private static readonly LOCALES = Object.keys(docResources);
-
-    private static readonly DEFAULT_LOCALE = DocumentationGenerator.LOCALES[0];
-
+    /**
+     * Output path.
+     */
     private static readonly OUTPUT_PATH = "app-extension/";
 
+    /**
+     * Dummy object for missing localization; should never be required.
+     */
+    private static readonly MISSING_LOCALIZATION: Localization = {
+        name: "*** MISSING LOCALIZATION ***",
+        description: "** MISSING LOCALIZATION ***"
+    };
+
+    /**
+     * Documentation resources.
+     */
+    private readonly _documentationResources: DocumentationResource[] = [];
+
+    /**
+     * Function names mapped by namespace.
+     */
     private readonly _namespaceFunctionNamesMap = new Map<string | undefined, string[]>();
 
+    /**
+     * Current function names reference while building function names mapped by namespace.
+     * @private
+     */
     private _currentFunctionNames!: string[];
 
     /**
@@ -65,17 +98,25 @@ class DocumentationGenerator extends Generator {
      * @returns
      * Path.
      */
-    private static pathOf(relative: boolean, locale: string, namespace: string | undefined = undefined, fileName: string | undefined = undefined): string {
-        return `${relative ? "site/" : "/"}${locale === DocumentationGenerator.DEFAULT_LOCALE ? "" : `${locale}/`}${DocumentationGenerator.OUTPUT_PATH}${namespace === undefined ? "" : `${namespace}/`}${fileName ?? ""}`;
+    private pathOf(relative: boolean, locale: string, namespace: string | undefined = undefined, fileName: string | undefined = undefined): string {
+        return `${relative ? "site/" : "/"}${locale === this.defaultLocale ? "" : `${locale}/`}${DocumentationGenerator.OUTPUT_PATH}${namespace === undefined ? "" : `${namespace}/`}${fileName ?? ""}`;
     }
 
     /**
      * @inheritDoc
      */
     protected initialize(): void {
-        for (const locale of DocumentationGenerator.LOCALES) {
+        for (const locale of this.locales) {
+            this._documentationResources.push({
+                locale,
+                ...i18nextDoc.t("Documentation", {
+                    lng: locale,
+                    returnObjects: true
+                })
+            });
+
             // Remove previously generated contents.
-            fs.rmSync(DocumentationGenerator.pathOf(true, locale), {
+            fs.rmSync(this.pathOf(true, locale), {
                 recursive: true,
                 force: true
             });
@@ -85,7 +126,9 @@ class DocumentationGenerator extends Generator {
     /**
      * @inheritDoc
      */
-    protected createProxyObject(namespace: string | undefined, _className: string, _namespaceClassName: string, _objectName: string): void {
+    protected createProxyObject(proxyObjectDescriptor: ProxyObjectDescriptor): void {
+        const namespace = proxyObjectDescriptor.namespace;
+
         let currentFunctionNames = this._namespaceFunctionNamesMap.get(namespace);
 
         if (currentFunctionNames === undefined) {
@@ -95,7 +138,7 @@ class DocumentationGenerator extends Generator {
 
             // Create locale namespace directory if it doesn't exist.
             for (const locale of Object.keys(docResources)) {
-                const localeNamespacePath = DocumentationGenerator.pathOf(true, locale, namespace);
+                const localeNamespacePath = this.pathOf(true, locale, namespace);
 
                 fs.mkdirSync(localeNamespacePath, {
                     recursive: true
@@ -109,63 +152,46 @@ class DocumentationGenerator extends Generator {
     /**
      * @inheritDoc
      */
-    protected createProxyFunction(namespace: string | undefined, _className: string, _namespaceClassName: string, _objectName: string, functionName: string, _namespaceFunctionName: string, methodDescriptor: MethodDescriptor): void {
-        console.log(namespace, _className, _namespaceClassName, _objectName, functionName, _namespaceFunctionName);
+    protected createProxyFunction(proxyFunctionDescriptor: ProxyFunctionDescriptor): void {
+        const {
+            namespace,
+            functionName,
+            proxyParameterDescriptors
+        } = proxyFunctionDescriptor;
 
         this._currentFunctionNames.push(functionName);
 
         // Localize functions JSON file.
-        for (const locale of Object.keys(docResources)) {
-            const lngOption = {
-                lng: locale
-            };
+        for (const documentationResource of this._documentationResources) {
+            const locale = documentationResource.locale;
 
-            const appExtensionNSLngOption = {
-                ns: appExtensionNS as typeof appExtensionNS,
-                lng: locale
-            };
+            const functionLocalization = proxyFunctionDescriptor.localizationsMap.get(locale) ?? DocumentationGenerator.MISSING_LOCALIZATION;
 
-            const functionLocalizedKeyPrefix = `Functions.${namespace === undefined ? "" : `${namespace}.`}${functionName}`;
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Locale key exists.
-            const functionLocalizedName = i18nextDoc.t(`${functionLocalizedKeyPrefix}.name` as ParseKeys<typeof appExtensionNS>, appExtensionNSLngOption);
-
-            const f = fs.createWriteStream(DocumentationGenerator.pathOf(true, locale, namespace, `${functionLocalizedName}.md`));
+            const f = fs.createWriteStream(this.pathOf(true, locale, namespace, `${functionLocalization.name}.md`));
 
             f.write("---\noutline: false\nnavbar: false\n---\n\n");
 
-            f.write(`# ${namespace === undefined ? "" : `${namespace}.`}${functionLocalizedName}\n\n`);
+            f.write(`# ${namespace === undefined ? "" : `${namespace}.`}${functionLocalization.name}\n\n`);
 
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Locale key exists.
-            f.write(`${i18nextDoc.t(`${functionLocalizedKeyPrefix}.description` as ParseKeys<typeof appExtensionNS>, appExtensionNSLngOption)}\n`);
+            f.write(`${functionLocalization.description}\n`);
 
-            if (methodDescriptor.parameterDescriptors.length !== 0) {
-                f.write(`\n## ${i18nextDoc.t("Documentation.parameters", lngOption)}\n\n`);
+            if (proxyParameterDescriptors.length !== 0) {
+                f.write(`\n## ${documentationResource.parameters}\n\n`);
 
-                const nameTitle = i18nextDoc.t("Documentation.name", lngOption);
-                const typeTitle = i18nextDoc.t("Documentation.type", lngOption);
-                const descriptionTitle = i18nextDoc.t("Documentation.description", lngOption);
-
-                const parametersDocumentation: ParameterDocumentation[] = methodDescriptor.parameterDescriptors.map((parameterDescriptor) => {
-                    const expandedParameterDescriptor = expandParameterDescriptor(parameterDescriptor);
-
-                    const parameterLocalizedKeyPrefix = `Parameters.${expandedParameterDescriptor.name}.`;
+                const parametersDocumentation: ParameterDocumentation[] = proxyParameterDescriptors.map((proxyParameterDescriptor) => {
+                    const parameterLocalization = proxyParameterDescriptor.localizationsMap.get(locale) ?? DocumentationGenerator.MISSING_LOCALIZATION;
 
                     return {
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Locale key exists.
-                        name: i18nextDoc.t(`${parameterLocalizedKeyPrefix}name` as ParseKeys<typeof appExtensionNS>, appExtensionNSLngOption),
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Locale key exists.
-                        type: i18nextDoc.t(`Documentation.type${Type[expandedParameterDescriptor.type]}` as ParseKeys, lngOption),
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Locale key exists.
-                        description: i18nextDoc.t(`${parameterLocalizedKeyPrefix}description` as ParseKeys<typeof appExtensionNS>, appExtensionNSLngOption)
+                        ...parameterLocalization,
+                        type: documentationResource.types[proxyParameterDescriptor.parameterDescriptor.type]
                     };
                 });
 
-                const maximumNameLength = Math.max(nameTitle.length, ...parametersDocumentation.map(parameterDocumentation => parameterDocumentation.name.length));
-                const maximumTypeLength = Math.max(typeTitle.length, ...parametersDocumentation.map(parameterDocumentation => parameterDocumentation.type.length));
-                const maximumDescriptionLength = Math.max(descriptionTitle.length, ...parametersDocumentation.map(parameterDocumentation => parameterDocumentation.description.length));
+                const maximumNameLength = Math.max(documentationResource.name.length, ...parametersDocumentation.map(parameterDocumentation => parameterDocumentation.name.length));
+                const maximumTypeLength = Math.max(documentationResource.type.length, ...parametersDocumentation.map(parameterDocumentation => parameterDocumentation.type.length));
+                const maximumDescriptionLength = Math.max(documentationResource.description.length, ...parametersDocumentation.map(parameterDocumentation => parameterDocumentation.description.length));
 
-                f.write(`| ${nameTitle.padEnd(maximumNameLength)} | ${typeTitle.padEnd(maximumTypeLength)} | ${descriptionTitle.padEnd(maximumDescriptionLength)} |\n`);
+                f.write(`| ${documentationResource.name.padEnd(maximumNameLength)} | ${documentationResource.type.padEnd(maximumTypeLength)} | ${documentationResource.description.padEnd(maximumDescriptionLength)} |\n`);
                 f.write(`|-${"".padEnd(maximumNameLength, "-")}-|-${"".padEnd(maximumTypeLength, "-")}-|-${"".padEnd(maximumDescriptionLength, "-")}-|\n`);
 
                 for (const parameterDocumentation of parametersDocumentation) {
@@ -182,7 +208,7 @@ class DocumentationGenerator extends Generator {
      */
     protected finalize(success: boolean): void {
         if (success) {
-            for (const locale of DocumentationGenerator.LOCALES) {
+            for (const locale of this.locales) {
                 const lngOption = {
                     lng: locale
                 };
@@ -212,12 +238,12 @@ class DocumentationGenerator extends Generator {
 
                         currentSidebarItems.push({
                             text: functionLocalizedName,
-                            link: DocumentationGenerator.pathOf(false, locale, namespace, `${functionLocalizedName}.md`)
+                            link: this.pathOf(false, locale, namespace, `${functionLocalizedName}.md`)
                         });
                     }
                 }
 
-                fs.writeFileSync(`${DocumentationGenerator.pathOf(true, locale)}app-extension-sidebar.json`, JSON.stringify(rootSidebarItems, null, 2));
+                fs.writeFileSync(`${this.pathOf(true, locale)}app-extension-sidebar.json`, JSON.stringify(rootSidebarItems, null, 2));
             }
         }
     }
@@ -227,4 +253,5 @@ i18nDocInit(I18nEnvironment.CLI).then(async () => {
     await new DocumentationGenerator().generate();
 }).catch((e: unknown) => {
     console.error(e);
+    process.exit(1);
 });

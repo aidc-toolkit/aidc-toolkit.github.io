@@ -4,9 +4,6 @@ export const localeStrings = {
         name: "Nom",
         type: "Type",
         description: "Description",
-        typeString: "Chaîne",
-        typeNumber: "Numéro",
-        typeBoolean: "Booléen",
-        typeAny: "N'importe quel"
+        types: ["Chaîne", "Numéro", "Booléen", "N'importe quel"]
     }
 };
