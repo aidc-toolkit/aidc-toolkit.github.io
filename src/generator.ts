@@ -76,7 +76,6 @@ class DocumentationGenerator extends Generator {
 
     /**
      * Current function names reference while building function names mapped by namespace.
-     * @private
      */
     private _currentFunctionNames!: string[];
 
