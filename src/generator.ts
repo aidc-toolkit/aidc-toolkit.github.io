@@ -7,7 +7,6 @@ import {
     type ProxyObjectDescriptor
 } from "@aidc-toolkit/app-generator";
 import { I18nEnvironment } from "@aidc-toolkit/core";
-import type { ParseKeys } from "i18next";
 import fs from "node:fs";
 import type { DefaultTheme } from "vitepress/theme";
 import { type DocLocaleStrings, docResources, i18nDocInit, i18nextDoc } from "./locale/i18n.ts";
@@ -208,10 +207,6 @@ class DocumentationGenerator extends Generator {
     protected finalize(success: boolean): void {
         if (success) {
             for (const locale of this.locales) {
-                const lngOption = {
-                    lng: locale
-                };
-
                 const rootSidebarItems: DefaultTheme.SidebarItem[] = [];
 
                 for (const [namespace, functionNames] of this._namespaceFunctionNamesMap.entries()) {
@@ -230,10 +225,7 @@ class DocumentationGenerator extends Generator {
                     }
 
                     for (const functionName of functionNames) {
-                        const functionLocalizedKeyPrefix = `Functions.${namespace === undefined ? "" : `${namespace}.`}${functionName}`;
-
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Locale key exists.
-                        const functionLocalizedName = i18nextDoc.t(`${functionLocalizedKeyPrefix}.name` as ParseKeys, lngOption);
+                        const functionLocalizedName = this.getFunctionLocalization(`${namespace === undefined ? "" : `${namespace}.`}${functionName}`, locale).name;
 
                         currentSidebarItems.push({
                             text: functionLocalizedName,
