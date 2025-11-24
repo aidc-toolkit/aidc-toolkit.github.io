@@ -113,48 +113,12 @@ jobs:
           project: demo
           branch: ${{ steps.ref-branch.outputs.branch }}
 
-      - name: Checkout app-extension
-        uses: actions/checkout@v6
+      - name: Build doc
+        uses: ./.github/actions/build-project-doc
         with:
-          repository: aidc-toolkit/app-extension
-          ref: ${{ steps.ref-branch.outputs.branch }}
-          path: app-extension
-
-      - name: Checkout app-generator
-        uses: actions/checkout@v6
-        with:
-          repository: aidc-toolkit/app-generator
-          ref: ${{ steps.ref-branch.outputs.branch }}
-          path: app-generator
-
-      - name: Build app
-        run: |
-          cd app-extension
-          rm -f package-lock.json
-          npm install
-          npm run build:dev
-          ls -al dist
-          
-          cd ../app-generator
-          rm -f package-lock.json
-          npm install
-          cp -r ../app-extension/dist node_modules/@aidc-toolkit/app-extension/dist
-          npm run build:dev
-          ls -al dist
-          
-          cd ../doc
-          rm -f package-lock.json
-          npm install
-          cp -r ../app-extension/dist node_modules/@aidc-toolkit/app-extension/dist
-          cp -r ../app-generator/dist node_modules/@aidc-toolkit/app-generator/dist
-          npm run build:doc -- --base ${{ steps.setup-base.outputs.base }}
-
-#      - name: Build doc
-#        uses: ./.github/actions/build-project-doc
-#        with:
-#          project: doc
-#          branch: ${{ steps.ref-branch.outputs.branch }}
-#          build_parameters: --base ${{ steps.setup-base.outputs.base }}
+          project: doc
+          branch: ${{ steps.ref-branch.outputs.branch }}
+          build_parameters: --base ${{ steps.setup-base.outputs.base }}
 
       - name: Start terminal session (post build)
         if: vars.TERMINAL_POST_BUILD == 'true'
@@ -163,21 +127,20 @@ jobs:
       - name: Save release
         if: github.event_name == 'release'
         run: |
-          # Create pages.zip in root directory then move to publication directory.
+          # Create pages.zip.
           cd doc/.vitepress/dist
-          zip -q -r ../../../pages .
-          mv ../../../pages.zip .
+          zip -q -r pages .
 
       - name: Restore release
         if: github.event_name != 'release'
         run: |
-          # Enable glob expansion.
-          shopt -s extglob nullglob
-
           # Move content to preview directory.
-          cd doc/.vitepress/dist
-          mkdir preview
-          mv .!(|.) !(preview) preview/
+          cd doc/.vitepress
+          mv dist _dist
+          mkdir dist
+          mv _dist dist/preview
+          
+          cd dist
           
           # Patch preview.
           find preview -name "*.html" -print0 | xargs -0 sed -i -e 's/https:\/\/aidc-toolkit.com/https:\/\/aidc-toolkit.com\/preview/g'
