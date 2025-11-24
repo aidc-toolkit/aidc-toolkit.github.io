@@ -28,6 +28,9 @@ runs:
       shell: bash
       working-directory: ${{ inputs.project }}
       run: |
+        # Temporary patch.
+        rm package-lock.json
+        
         npm install
 
         # All projects have build:doc script.
