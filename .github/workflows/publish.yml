@@ -130,17 +130,20 @@ jobs:
       - name: Build app
         run: |
           cd app-extension
+          rm package-lock.json
           npm install
           npm run build:dev
           ls -al dist
           
           cd ../app-generator
+          rm package-lock.json
           npm install
           cp -r ../app-extension/dist node_modules/@aidc-toolkit/app-extension/dist
           npm run build:dev
           ls -al dist
           
           cd ../doc
+          rm package-lock.json
           npm install
           cp -r ../app-extension/dist node_modules/@aidc-toolkit/app-extension/dist
           cp -r ../app-generator/dist node_modules/@aidc-toolkit/app-generator/dist
