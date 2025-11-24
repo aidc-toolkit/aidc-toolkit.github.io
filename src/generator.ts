@@ -5,7 +5,7 @@ import {
     type Localization,
     type ProxyFunctionDescriptor,
     type ProxyObjectDescriptor
-} from "@aidc-toolkit/app-generator";
+} from "@aidc-toolkit/app-extension";
 import { I18nEnvironment } from "@aidc-toolkit/core";
 import fs from "node:fs";
 import type { DefaultTheme } from "vitepress/theme";
