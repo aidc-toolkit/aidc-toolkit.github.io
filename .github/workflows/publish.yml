@@ -20,20 +20,18 @@ jobs:
       run-publish: ${{ steps.check-event.outputs.run-publish }}
 
     steps:
-      - name: Checkout default repository (doc)
+      - name: Checkout default repository
+        if: github.event_name != 'release'
         uses: actions/checkout@v6
-        with:
-          path: doc
 
       - name: Check event
         id: check-event
-        working-directory: doc
         run: |
-          # Get the tags for the branch; fetch-tags on checkout fails.
-          git fetch
-          
           if [[ "${{ github.event_name }}" != "release" ]]
           then
+            # Get the tags for the branch; fetch-tags on checkout fails.
+            git fetch
+            
             # Publish will be skipped if it has a tag that matches the version format.
             if [[ `git tag --points-at HEAD "v*.*.*" | wc -l` -eq 0 ]]
             then
@@ -76,6 +74,11 @@ jobs:
           cat << EOF
           ${{ toJSON(github) }}
           EOF
+
+      - name: Checkout default repository (doc)
+        uses: actions/checkout@v6
+        with:
+          path: doc
 
       - name: Reference branch
         id: ref-branch
