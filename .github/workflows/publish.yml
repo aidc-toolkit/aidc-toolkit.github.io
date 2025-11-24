@@ -64,7 +64,7 @@ jobs:
           Publication base: $base
           EOF
 
-          cat doc/public/repository.txt
+          cat doc/site/public/repository.txt
           
           echo "base=$base" >> $GITHUB_OUTPUT
 
