@@ -5,6 +5,8 @@ on:
     branches:
       - v*
   release:
+    types:
+      - published
 
 permissions:
   id-token: write
@@ -33,42 +35,43 @@ jobs:
           ${{ toJSON(github) }}
           EOF
 
-      - name: Setup branch
-        id: setup-branch
+      - name: Checkout default repository (doc)
+        uses: actions/checkout@v4
+        with:
+          path: doc
+
+      - name: Reference branch
+        id: ref-branch
+        uses: aidc-toolkit/.github/actions/ref-branch@main
+        with:
+          path: doc
+
+      - name: Setup base
+        id: setup-base
         run: |
           if [[ "${{ github.event_name }}" = "push" ]]
           then
-            # Ref for push event is the branch.
-            ref="${{ github.ref }}"
             base="/preview/"
           else
-            # Ref for release event is the tag.
-            ref=`echo ${{ github.ref }} | sed -e 's/^refs\/tags\/\(v[0-9]*\.[0-9]*\)\..*$/refs\/heads\/\1/'`
             base="/"
           fi
           
           # Create repository state file
           cat > doc/public/repository.txt << EOF
-          Date: `date`
-          Branch reference: $ref
+          Date/time: `date`
+          Branch name: ${{ steps.ref-branch.outputs.branch_name }}
           Publication base: $base
           EOF
 
           cat doc/public/repository.txt
           
-          echo "ref=ref" >> $GITHUB_OUTPUT
-          echo "$base=$base" >> $GITHUB_OUTPUT
+          echo "base=$base" >> $GITHUB_OUTPUT
 
       - name: Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ vars.NODE_VERSION }}
           registry-url: https://registry.npmjs.org/
-
-      - name: Checkout default repository (doc)
-        uses: actions/checkout@v4
-        with:
-          path: doc
 
       - name: Move .github
         run: |
@@ -83,38 +86,38 @@ jobs:
         uses: ./.github/actions/build-project-doc
         with:
           project: dev
-          ref: ${{ steps.setup-branch.outputs.ref }}
+          branch: ${{ steps.setup-branch.outputs.ref }}
 
       - name: Build core
         uses: ./.github/actions/build-project-doc
         with:
           project: core
-          ref: ${{ steps.setup-branch.outputs.ref }}
+          branch: ${{ steps.ref-branch.outputs.branch }}
 
       - name: Build utility
         uses: ./.github/actions/build-project-doc
         with:
           project: utility
-          ref: ${{ steps.setup-branch.outputs.ref }}
+          branch: ${{ steps.ref-branch.outputs.branch }}
 
       - name: Build gs1
         uses: ./.github/actions/build-project-doc
         with:
           project: gs1
-          ref: ${{ steps.setup-branch.outputs.ref }}
+          branch: ${{ steps.ref-branch.outputs.branch }}
 
       - name: Build demo
         uses: ./.github/actions/build-project-doc
         with:
           project: demo
-          ref: ${{ steps.setup-branch.outputs.ref }}
+          branch: ${{ steps.ref-branch.outputs.branch }}
 
       - name: Build doc
         uses: ./.github/actions/build-project-doc
         with:
           project: doc
-          ref: ${{ steps.setup-branch.outputs.ref }}
-          build_parameters: --base ${{ steps.setup-branch.outputs.base }}
+          branch: ${{ steps.ref-branch.outputs.branch }}
+          build_parameters: --base ${{ steps.setup-base.outputs.base }}
 
       - name: Start terminal session (post build)
         if: vars.TERMINAL_POST_BUILD == 'true'

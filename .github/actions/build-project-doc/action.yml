@@ -4,8 +4,8 @@ inputs:
   project:
     description: Project to be built
     required: true
-  ref:
-    description: Project reference to checkout
+  branch:
+    description: Branch to checkout
     required: true
   build_parameters:
     description: Additional build parameters
@@ -15,31 +15,13 @@ runs:
   using: composite
 
   steps:
-    - name: Build tag
-      id: build-tag
-      # Documentation (this) project has already been checked out and moved to the correct directory.
-      if: inputs.project != 'doc'
-      shell: bash
-      run: |
-        # Push to main means to assemble pages from main as well.
-        if [[ "${{ github.ref_name }}" = "main" ]]
-        then
-          tag="main"
-        else
-          # Get the latest version tag.
-          tag=`git ls-remote --refs ${{ github.server_url }}/aidc-toolkit/${{ inputs.project }}.git | grep -o -E "v[0-9]+\.[0-9]+\.[0-9]+.*" | sort -V | tail -1`
-        fi
-
-        echo "Latest tag is $tag"
-        echo "tag=$tag" >> $GITHUB_OUTPUT
-
     - name: Checkout
-      # Documentation (this) project has already been checked out and moved to the correct directory.
+      # Documentation (this) project has already been checked out to the correct directory.
       if: inputs.project != 'doc'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: aidc-toolkit/${{ inputs.project }}
-        ref: ${{ steps.build-tag.outputs.tag }}
+        ref: ${{ inputs.branch }}
         path: ${{ inputs.project }}
 
     - name: Build for documentation
