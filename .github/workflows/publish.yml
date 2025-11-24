@@ -28,6 +28,7 @@ jobs:
 
       - name: Check event
         id: check-event
+        working-directory: doc
         run: |
           if [[ "${{ github.event_name }}" != "release" ]]
           then
