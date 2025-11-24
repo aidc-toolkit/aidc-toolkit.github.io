@@ -87,7 +87,7 @@ jobs:
         uses: ./.github/actions/build-project-doc
         with:
           project: dev
-          branch: ${{ steps.setup-branch.outputs.ref }}
+          branch: ${{ steps.setup-branch.outputs.branch }}
 
       - name: Build core
         uses: ./.github/actions/build-project-doc
