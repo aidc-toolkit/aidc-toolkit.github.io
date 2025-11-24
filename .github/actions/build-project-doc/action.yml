@@ -24,6 +24,9 @@ runs:
         ref: ${{ inputs.branch }}
         path: ${{ inputs.project }}
 
+    - name: Start terminal session
+      uses: mxschmitt/action-tmate@v3
+
     - name: Build for documentation
       shell: bash
       working-directory: ${{ inputs.project }}
