@@ -113,6 +113,39 @@ jobs:
           project: demo
           branch: ${{ steps.ref-branch.outputs.branch }}
 
+      - name: Checkout app-extension
+        uses: actions/checkout@v6
+        with:
+          repository: aidc-toolkit/app-extension
+          ref: ${{ inputs.branch }}
+          path: app-extension
+
+      - name: Checkout app-generator
+        uses: actions/checkout@v6
+        with:
+          repository: aidc-toolkit/app-generator
+          ref: ${{ inputs.branch }}
+          path: app-generator
+
+      - name: Build app
+        run: |
+          cd app-extension
+          npm install
+          npm run build:dev
+          ls -al dist
+          
+          cd ../app-generator
+          npm install
+          cp -r ../app-extension/dist node_modules/@aidc-toolkit/app-extension/dist
+          npm run build:dev
+          ls -al dist
+          
+          cd ../doc
+          npm install
+          cp -r ../app-extension/dist node_modules/@aidc-toolkit/app-extension/dist
+          cp -r ../app-generator/dist node_modules/@aidc-toolkit/app-generator/dist
+          npm run build:doc
+
       - name: Build doc
         uses: ./.github/actions/build-project-doc
         with:
