@@ -31,11 +31,6 @@ runs:
         # Temporary patch.
         rm -f package-lock.json
         
-        set
-        
-        echo ${{ inputs.project }}
-        echo ${{ inputs.branch }}
-        
         npm install
 
         # All projects have build:doc script.
