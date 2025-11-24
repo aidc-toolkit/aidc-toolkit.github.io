@@ -117,33 +117,33 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: aidc-toolkit/app-extension
-          ref: ${{ inputs.branch }}
+          ref: ${{ steps.ref-branch.outputs.branch }}
           path: app-extension
 
       - name: Checkout app-generator
         uses: actions/checkout@v6
         with:
           repository: aidc-toolkit/app-generator
-          ref: ${{ inputs.branch }}
+          ref: ${{ steps.ref-branch.outputs.branch }}
           path: app-generator
 
       - name: Build app
         run: |
           cd app-extension
-          rm package-lock.json
+          rm -f package-lock.json
           npm install
           npm run build:dev
           ls -al dist
           
           cd ../app-generator
-          rm package-lock.json
+          rm -f package-lock.json
           npm install
           cp -r ../app-extension/dist node_modules/@aidc-toolkit/app-extension/dist
           npm run build:dev
           ls -al dist
           
           cd ../doc
-          rm package-lock.json
+          rm -f package-lock.json
           npm install
           cp -r ../app-extension/dist node_modules/@aidc-toolkit/app-extension/dist
           cp -r ../app-generator/dist node_modules/@aidc-toolkit/app-generator/dist
