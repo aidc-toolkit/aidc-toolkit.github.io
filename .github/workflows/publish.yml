@@ -147,14 +147,14 @@ jobs:
           npm install
           cp -r ../app-extension/dist node_modules/@aidc-toolkit/app-extension/dist
           cp -r ../app-generator/dist node_modules/@aidc-toolkit/app-generator/dist
-          npm run build:doc
+          npm run build:doc -- --base ${{ steps.setup-base.outputs.base }}
 
-      - name: Build doc
-        uses: ./.github/actions/build-project-doc
-        with:
-          project: doc
-          branch: ${{ steps.ref-branch.outputs.branch }}
-          build_parameters: --base ${{ steps.setup-base.outputs.base }}
+#      - name: Build doc
+#        uses: ./.github/actions/build-project-doc
+#        with:
+#          project: doc
+#          branch: ${{ steps.ref-branch.outputs.branch }}
+#          build_parameters: --base ${{ steps.setup-base.outputs.base }}
 
       - name: Start terminal session (post build)
         if: vars.TERMINAL_POST_BUILD == 'true'
