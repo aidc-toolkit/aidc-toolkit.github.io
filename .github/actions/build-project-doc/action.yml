@@ -29,7 +29,12 @@ runs:
       working-directory: ${{ inputs.project }}
       run: |
         # Temporary patch.
-        rm package-lock.json
+        rm -f package-lock.json
+        
+        set
+        
+        echo ${{ inputs.project }}
+        echo ${{ inputs.branch }}
         
         npm install
 
