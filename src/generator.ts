@@ -6,7 +6,7 @@ import {
     type ProxyFunctionDescriptor,
     type ProxyObjectDescriptor
 } from "@aidc-toolkit/app-extension";
-import { I18nEnvironment } from "@aidc-toolkit/core";
+import { I18nEnvironments } from "@aidc-toolkit/core";
 import fs from "node:fs";
 import type { DefaultTheme } from "vitepress/theme";
 import { type DocLocaleStrings, docResources, i18nDocInit, i18nextDoc } from "./locale/i18n.ts";
@@ -240,7 +240,7 @@ class DocumentationGenerator extends Generator {
     }
 }
 
-i18nDocInit(I18nEnvironment.CLI).then(async () => {
+i18nDocInit(I18nEnvironments.CLI).then(async () => {
     await new DocumentationGenerator().generate();
 }).catch((e: unknown) => {
     console.error(e);
