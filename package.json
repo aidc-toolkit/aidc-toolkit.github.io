@@ -17,13 +17,13 @@
   },
   "scripts": {
     "lint": "eslint",
-    "copy-to-public": "rimraf site/public && copy-files-from-to --config copy-to-public.json",
+    "copy-to-public": "copy-files-from-to --config copy-to-public.json",
     "generator": "tsx src/generator.ts",
     "build:core": "npm run copy-to-public && typedoc && npm run generator && vitepress build",
-    "build:dev": "npm run build:core -- $*",
+    "build:dev": "rimraf site/public && npm run build:core -- $*",
     "build:doc": "npm run build:core -- $*",
     "server": "vitepress dev",
-    "server-preview": "npm run build:doc && vitepress preview"
+    "server-preview": "npm run build:dev && vitepress preview"
   },
   "devDependencies": {
     "@aidc-toolkit/dev": "beta",
