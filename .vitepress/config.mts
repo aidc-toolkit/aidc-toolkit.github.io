@@ -38,7 +38,8 @@ export default defineConfig({
             },
             {
                 text: "Demo",
-                link: "/demo/"
+                link: "/demo/",
+                target: "_self"
             },
             {
                 text: "API",
