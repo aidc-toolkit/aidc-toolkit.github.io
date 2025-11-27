@@ -1,4 +1,4 @@
-export const localeStrings = {
+export default {
     Documentation: {
         parameters: "Parameters",
         name: "Name",

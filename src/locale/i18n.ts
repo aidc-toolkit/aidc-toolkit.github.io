@@ -1,27 +1,27 @@
 import { appExtensionResources, i18nAppExtensionInit } from "@aidc-toolkit/app-extension";
 import { i18nAssertValidResources, i18nCoreInit, type I18nEnvironment } from "@aidc-toolkit/core";
 import i18next, { type i18n, type Resource } from "i18next";
-import { localeStrings as enLocaleStrings } from "./en/locale-strings.js";
-import { localeStrings as frLocaleStrings } from "./fr/locale-strings.js";
+import enLocaleResources from "./en/locale-resources.js";
+import frLocaleResources from "./fr/locale-resources.js";
 
 export const docNS = "aidct_doc";
 
 /**
  * Locale strings type is extracted from the English locale strings object.
  */
-export type DocLocaleStrings = typeof enLocaleStrings;
+export type DocLocaleResources = typeof enLocaleResources;
 
-i18nAssertValidResources(enLocaleStrings, "fr", frLocaleStrings);
+i18nAssertValidResources(enLocaleResources, "fr", frLocaleResources);
 
 /**
  * Documentation resources.
  */
 export const docResources: Resource = {
     en: {
-        aidct_doc: enLocaleStrings
+        aidct_doc: enLocaleResources
     },
     fr: {
-        aidct_doc: frLocaleStrings
+        aidct_doc: frLocaleResources
     }
 };
 

@@ -1,5 +1,5 @@
-import type { AppExtensionLocaleStrings } from "@aidc-toolkit/app-extension";
-import type { DocLocaleStrings } from "./i18n.js";
+import type { AppExtensionLocaleResources } from "@aidc-toolkit/app-extension";
+import type { DocLocaleResources } from "./i18n.js";
 
 /**
  * Internationalization module.
@@ -11,8 +11,8 @@ declare module "i18next" {
     interface CustomTypeOptions {
         defaultNS: "aidct_doc";
         resources: {
-            aidct_app_extension: AppExtensionLocaleStrings;
-            aidct_doc: DocLocaleStrings;
+            aidct_app_extension: AppExtensionLocaleResources;
+            aidct_doc: DocLocaleResources;
         };
     }
 }
