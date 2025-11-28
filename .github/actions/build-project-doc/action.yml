@@ -28,9 +28,13 @@ runs:
       shell: bash
       working-directory: ${{ inputs.project }}
       run: |
+        # Remove package-lock.json; preview build may have references to inaccessible npm registries.
+        rm package-lock.json
+        
         # Link previous projects.
         sh ../link-all.sh
         
+        # Install remaining dependencies.
         npm install
 
         # All projects have build:doc script.
