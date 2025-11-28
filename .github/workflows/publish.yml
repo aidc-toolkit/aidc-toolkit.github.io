@@ -106,6 +106,9 @@ jobs:
 
           cat doc/site/public/repository.txt
           
+          # Create empty script.
+          touch link-all.sh
+          
           echo "base=$base" >> $GITHUB_OUTPUT
 
       - name: Setup node
@@ -151,6 +154,12 @@ jobs:
         uses: ./.github/actions/build-project-doc
         with:
           project: demo
+          branch: ${{ steps.ref-branch.outputs.branch }}
+
+      - name: Build app-extension
+        uses: ./.github/actions/build-project-doc
+        with:
+          project: app-extension
           branch: ${{ steps.ref-branch.outputs.branch }}
 
       - name: Build doc
