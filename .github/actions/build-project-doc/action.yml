@@ -40,6 +40,9 @@ runs:
         
         # Install remaining dependencies.
         npm install
+        
+        # Linking packages links to dependencies as well without including them in node_modules/.bin.
+        PATH=$PATH:../dev/node_modules/.bin
 
         # All projects have build:doc script.
         npm run build:doc -- ${{ inputs.build_parameters }}
