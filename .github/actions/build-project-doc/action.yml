@@ -31,6 +31,9 @@ runs:
       shell: bash
       working-directory: ${{ inputs.project }}
       run: |
+        # Remove package-lock.json; preview build may have references to inaccessible npm registries.
+        rm package-lock.json
+        
         # Patch versions and link previous projects.
         sh ../patch-aidc-toolkit.sh
         sh ../link-aidc-toolkit.sh
