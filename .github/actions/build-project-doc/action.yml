@@ -34,21 +34,31 @@ runs:
         # Remove package-lock.json; preview build may have references to inaccessible npm registries.
         rm package-lock.json
         
-        # Patch versions and link previous projects.
-        sh ../patch-aidc-toolkit.sh
-        sh ../link-aidc-toolkit.sh
+        # Development package has no dependencies.
+        if [[ -f ../dependencies ]]
+        then
+          # Patch dependency versions.
+          sh ../patch-dependency-versions.sh
+        
+          # Link dependencies; must be done all at once.
+          xargs npm link < ../dependencies
+        
+          # Linking packages links to dependencies as well without including them in node_modules/.bin so add the development package path.
+          PATH=$PATH:../dev/node_modules/.bin
+        fi
         
         # Install remaining dependencies.
         npm install
-        
-        # Linking packages links to dependencies as well without including them in node_modules/.bin.
-        PATH=$PATH:../dev/node_modules/.bin
 
         # All projects have build:doc script.
         npm run build:doc -- ${{ inputs.build_parameters }}
 
-        # Add this project to the link registry and to the script for the next project.
+        # Add this project to the link registry.
         npm link
+        
+        # Get the version and add to the patch script.
         version=`grep -oP '^  "version": "\K[^"]*' package.json`
-        echo "sed -i -e 's/\"@aidc-toolkit\\/${{ inputs.project }}\": \".*\"/\"@aidc-toolkit\\/${{ inputs.project }}\": \"$version\"/' package.json" >> ../patch-aidc-toolkit.sh 
-        echo "npm link @aidc-toolkit/${{ inputs.project }}" >> ../link-aidc-toolkit.sh
+        echo "sed -i -e 's/\"@aidc-toolkit\\/${{ inputs.project }}\": \".*\"/\"@aidc-toolkit\\/${{ inputs.project }}\": \"$version\"/' package.json" >> ../patch-dependency-versions.sh
+        
+        # Add the package name to the list of dependencies.
+        echo "@aidc-toolkit/${{ inputs.project }}" >> ../dependencies

@@ -106,10 +106,6 @@ jobs:
 
           cat doc/site/public/repository.txt
           
-          # Create empty scripts.
-          touch patch-aidc-toolkit.sh
-          touch link-aidc-toolkit.sh
-          
           echo "base=$base" >> $GITHUB_OUTPUT
 
       - name: Setup node
