@@ -31,8 +31,9 @@ runs:
       shell: bash
       working-directory: ${{ inputs.project }}
       run: |
-        # Link previous projects.
-        sh ../link-all.sh
+        # Patch versions and link previous projects.
+        sh ../patch-aidc-toolkit.sh
+        sh ../link-aidc-toolkit.sh
         
         # Install remaining dependencies.
         npm install
@@ -43,5 +44,5 @@ runs:
         # Add this project to the link registry and to the script for the next project.
         npm link
         version=`grep -oP '^  "version": "\K[^"]*' package.json`
-        echo "sed -i -e 's/\"@aidc-toolkit\\/${{ inputs.project }}\": \".*\"/\"@aidc-toolkit\\/${{ inputs.project }}\": \"$version\"/' package.json" >> ../link-all.sh 
-        echo "npm link @aidc-toolkit/${{ inputs.project }}" >> ../link-all.sh
+        echo "sed -i -e 's/\"@aidc-toolkit\\/${{ inputs.project }}\": \".*\"/\"@aidc-toolkit\\/${{ inputs.project }}\": \"$version\"/' package.json" >> ../patch-aidc-toolkit.sh 
+        echo "npm link @aidc-toolkit/${{ inputs.project }}" >> ../link-aidc-toolkit.sh
