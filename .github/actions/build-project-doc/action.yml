@@ -28,7 +28,7 @@ runs:
       shell: bash
       working-directory: ${{ inputs.project }}
       run: |
-        npm install
+        npm clean-install
 
         # All projects have build:doc script.
         npm run build:doc -- ${{ inputs.build_parameters }}
