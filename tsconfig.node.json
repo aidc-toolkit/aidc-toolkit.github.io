@@ -1,5 +1,6 @@
 {
   "extends": "@aidc-toolkit/dev/tsconfig.json",
+  "include": ["src/**/*", "eslint.config.ts", ".vitepress/config.mts"],
   "compilerOptions": {
     // Emit.
     "noEmit": true,
@@ -9,6 +10,5 @@
 
     // Language and environment.
     "moduleDetection": "force"
-  },
-  "include": [".vitepress/config.mts"]
+  }
 }
