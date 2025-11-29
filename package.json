@@ -18,8 +18,9 @@
   "scripts": {
     "lint": "eslint",
     "copy-to-public": "copy-files-from-to --config copy-to-public.json",
+    "typedoc": "typedoc",
     "generator": "tsx src/generator.ts",
-    "build:core": "npm run copy-to-public && typedoc && npm run generator && vitepress build",
+    "build:core": "npm run copy-to-public && npm run typedoc && npm run generator && vitepress build",
     "build:dev": "rimraf site/public && npm run build:core -- $*",
     "build:doc": "npm run build:core -- $*",
     "server": "vitepress dev",
