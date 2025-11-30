@@ -2,15 +2,18 @@ import { defineConfig } from "vitepress";
 import type { DefaultTheme } from "vitepress/theme";
 import apiSidebar from "../site/api/typedoc-sidebar.json";
 
+const demoSidebarItem: DefaultTheme.SidebarItem = {
+    text: "Demo",
+    link: "/demo/",
+    target: "_self"
+};
+
 const apiDemoSidebar: DefaultTheme.Sidebar = [
     {
         text: "API",
         items: apiSidebar
     },
-    {
-        text: "Demo",
-        link: "/demo"
-    }
+    demoSidebarItem
 ];
 
 // https://vitepress.dev/reference/site-config
@@ -37,14 +40,10 @@ export default defineConfig({
                 link: "/"
             },
             {
-                text: "Demo",
-                link: "/demo/",
-                target: "_self"
-            },
-            {
                 text: "API",
                 link: "/api/"
-            }
+            },
+            demoSidebarItem
         ],
 
         sidebar: {

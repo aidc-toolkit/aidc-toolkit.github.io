@@ -20,7 +20,7 @@ The AIDC Toolkit is a comprehensive set of libraries for integrating Automatic I
 
 > [!TIP]
 > 
-> Skip the boring stuff! Go straight to the [demo](demo/){target="_self"} or the [API documentation](api/).
+> Skip the boring stuff! Go straight to the [API documentation](api/) or the [demo](demo/){target="_self"}.
 
 ## Roadmap
 
