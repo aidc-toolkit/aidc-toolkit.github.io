@@ -27,6 +27,8 @@
     "server-preview": "npm run build:dev && vitepress preview"
   },
   "devDependencies": {
+    "@aidc-toolkit/app-extension": "alpha",
+    "@aidc-toolkit/core": "alpha",
     "@aidc-toolkit/dev": "alpha",
     "@types/node": "^24.10.1",
     "copy-files-from-to": "^3.13.0",
@@ -36,9 +38,5 @@
     "typedoc-plugin-mdn-links": "^5.0.10",
     "typedoc-vitepress-theme": "^1.1.2",
     "vitepress": "next"
-  },
-  "dependencies": {
-    "@aidc-toolkit/app-extension": "alpha",
-    "@aidc-toolkit/core": "alpha"
   }
 }
