@@ -199,7 +199,7 @@ jobs:
         working-directory: doc/.vitepress/dist
         run: |
           # Replace absolute URLs on aidc-toolkit.com with relative URLs.
-          find preview -name "*.html" -print0 | xargs -0 sed -i -e 's/https:\/\/aidc-toolkit.com\//\//g'
+          find . -name "*.html" -print0 | xargs -0 sed -i -e 's/https:\/\/aidc-toolkit.com\//\//g'
 
       - name: Start terminal session (post zip)
         if: vars.TERMINAL_POST_ZIP == 'true'
