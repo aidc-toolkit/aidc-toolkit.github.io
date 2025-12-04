@@ -35,11 +35,13 @@
     "@aidc-toolkit/dev": "1.0.25-beta",
     "@types/node": "^24.10.1",
     "copy-files-from-to": "^3.13.0",
+    "mermaid": "^11.12.2",
     "rimraf": "^6.1.2",
     "typedoc": "^0.28.15",
     "typedoc-plugin-markdown": "^4.9.0",
     "typedoc-plugin-mdn-links": "^5.0.10",
     "typedoc-vitepress-theme": "^1.1.2",
-    "vitepress": "next"
+    "vitepress": "next",
+    "vitepress-plugin-mermaid": "^2.0.17"
   }
 }

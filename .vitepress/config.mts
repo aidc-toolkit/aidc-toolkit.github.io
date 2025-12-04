@@ -1,4 +1,5 @@
 import { defineConfig } from "vitepress";
+import { withMermaid } from "vitepress-plugin-mermaid";
 import type { DefaultTheme } from "vitepress/theme";
 import apiSidebar from "../site/api/typedoc-sidebar.json";
 
@@ -17,7 +18,7 @@ const apiDemoSidebar: DefaultTheme.Sidebar = [
 ];
 
 // https://vitepress.dev/reference/site-config
-export default defineConfig({
+export default withMermaid(defineConfig({
     title: "AIDC Toolkit",
     description: "A comprehensive set of libraries for integrating Automatic Identification and Data Capture (AIDC) functionality into web-based applications",
 
@@ -74,4 +75,4 @@ export default defineConfig({
     //         lang: "fr"
     //     }
     // }
-});
+}));
