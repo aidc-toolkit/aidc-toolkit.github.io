@@ -49,4 +49,4 @@ Foundational utilities. This package provides classes to manipulate integers and
 
 ### [gs1](api/GS1/)
 
-GS1 AIDC Toolkit. This package is essentially an implementation of the identification portions of the [GS1 General Specifications](https://www.gs1.org/genspecs) A working knowledge of the GS1 identification system is necessary to use this package.
+GS1 AIDC Toolkit. This package is essentially an implementation of the identification portions of the [GS1 General Specifications](https://ref.gs1.org/standards/genspecs/) A working knowledge of the GS1 identification system is necessary to use this package.
