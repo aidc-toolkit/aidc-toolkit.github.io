@@ -5,7 +5,10 @@
   "type": "module",
   "private": true,
   "homepage": "https://aidc-toolkit.com/",
-  "repository": "aidc-toolkit/doc",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aidc-toolkit/doc.git"
+  },
   "bugs": {
     "url": "https://github.com/aidc-toolkit/doc/issues"
   },
