@@ -33,7 +33,6 @@
     "@aidc-toolkit/app-extension": "1.0.25-alpha.202512051638",
     "@aidc-toolkit/core": "1.0.25-alpha.202512051624",
     "@aidc-toolkit/dev": "1.0.25-alpha.202512051624",
-    "@types/node": "^24.10.1",
     "copy-files-from-to": "^3.13.0",
     "mermaid": "^11.12.2",
     "rimraf": "^6.1.2",
