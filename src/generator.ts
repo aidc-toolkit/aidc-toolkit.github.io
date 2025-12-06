@@ -9,7 +9,7 @@ import {
 import { I18nEnvironments } from "@aidc-toolkit/core";
 import fs from "node:fs";
 import type { DefaultTheme } from "vitepress/theme";
-import { type DocLocaleResources, docResources, i18nDocInit, i18nextDoc } from "./locale/i18n";
+import { type DocLocaleResources, docResources, i18nDocInit, i18nextDoc } from "./locale/i18n.js";
 
 /**
  * Documentation as structured in locale strings.

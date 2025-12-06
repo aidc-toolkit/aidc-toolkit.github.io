@@ -1,8 +1,8 @@
 import { appExtensionResources, i18nAppExtensionInit } from "@aidc-toolkit/app-extension";
 import { i18nCoreInit, type I18nEnvironment } from "@aidc-toolkit/core";
 import i18next, { type i18n, type Resource } from "i18next";
-import enLocaleResources from "./en/locale-resources";
-import frLocaleResources from "./fr/locale-resources";
+import enLocaleResources from "./en/locale-resources.js";
+import frLocaleResources from "./fr/locale-resources.js";
 
 export const docNS = "aidct_doc";
 

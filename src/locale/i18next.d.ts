@@ -1,5 +1,5 @@
 import type { AppExtensionLocaleResources } from "@aidc-toolkit/app-extension";
-import type { DocLocaleResources } from "./i18n";
+import type { DocLocaleResources } from "./i18n.js";
 
 /**
  * Internationalization module.

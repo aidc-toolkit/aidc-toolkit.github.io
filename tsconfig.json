@@ -2,10 +2,10 @@
   "include": [],
   "references": [
     {
-      "path": "./tsconfig.app.json"
+      "path": "./tsconfig-src.json"
     },
     {
-      "path": "./tsconfig.node.json"
+      "path": "./tsconfig-config.json"
     }
   ]
 }
