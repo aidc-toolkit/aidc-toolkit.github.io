@@ -53,12 +53,12 @@ class DocumentationGenerator extends Generator {
     /**
      * Output path.
      */
-    private static readonly OUTPUT_PATH = "app-extension/";
+    static readonly #OUTPUT_PATH = "app-extension/";
 
     /**
      * Dummy object for missing localization; should never be required.
      */
-    private static readonly MISSING_LOCALIZATION: Localization = {
+    static readonly #MISSING_LOCALIZATION: Localization = {
         name: "*** MISSING LOCALIZATION ***",
         description: "** MISSING LOCALIZATION ***"
     };
@@ -66,17 +66,17 @@ class DocumentationGenerator extends Generator {
     /**
      * Documentation resources.
      */
-    private readonly _documentationResources: DocumentationResource[] = [];
+    readonly #documentationResources: DocumentationResource[] = [];
 
     /**
      * Function names mapped by namespace.
      */
-    private readonly _namespaceFunctionNamesMap = new Map<string | undefined, string[]>();
+    readonly #namespaceFunctionNamesMap = new Map<string | undefined, string[]>();
 
     /**
      * Current function names reference while building function names mapped by namespace.
      */
-    private _currentFunctionNames!: string[];
+    #currentFunctionNames!: string[];
 
     /**
      * Get the path of a locale, optional namespace, and optional file name.
@@ -96,8 +96,8 @@ class DocumentationGenerator extends Generator {
      * @returns
      * Path.
      */
-    private pathOf(relative: boolean, locale: string, namespace: string | undefined = undefined, fileName: string | undefined = undefined): string {
-        return `${relative ? "site/" : "/"}${locale === this.defaultLocale ? "" : `${locale}/`}${DocumentationGenerator.OUTPUT_PATH}${namespace === undefined ? "" : `${namespace}/`}${fileName ?? ""}`;
+    #pathOf(relative: boolean, locale: string, namespace: string | undefined = undefined, fileName: string | undefined = undefined): string {
+        return `${relative ? "site/" : "/"}${locale === this.defaultLocale ? "" : `${locale}/`}${DocumentationGenerator.#OUTPUT_PATH}${namespace === undefined ? "" : `${namespace}/`}${fileName ?? ""}`;
     }
 
     /**
@@ -105,7 +105,7 @@ class DocumentationGenerator extends Generator {
      */
     protected initialize(): void {
         for (const locale of this.locales) {
-            this._documentationResources.push({
+            this.#documentationResources.push({
                 locale,
                 ...i18nextDoc.t("Documentation", {
                     lng: locale,
@@ -114,7 +114,7 @@ class DocumentationGenerator extends Generator {
             });
 
             // Remove previously generated contents.
-            fs.rmSync(this.pathOf(true, locale), {
+            fs.rmSync(this.#pathOf(true, locale), {
                 recursive: true,
                 force: true
             });
@@ -127,16 +127,16 @@ class DocumentationGenerator extends Generator {
     protected createProxyObject(proxyObjectDescriptor: ProxyObjectDescriptor): void {
         const namespace = proxyObjectDescriptor.namespace;
 
-        let currentFunctionNames = this._namespaceFunctionNamesMap.get(namespace);
+        let currentFunctionNames = this.#namespaceFunctionNamesMap.get(namespace);
 
         if (currentFunctionNames === undefined) {
             currentFunctionNames = [];
 
-            this._namespaceFunctionNamesMap.set(namespace, currentFunctionNames);
+            this.#namespaceFunctionNamesMap.set(namespace, currentFunctionNames);
 
             // Create locale namespace directory if it doesn't exist.
             for (const locale of Object.keys(docResources)) {
-                const localeNamespacePath = this.pathOf(true, locale, namespace);
+                const localeNamespacePath = this.#pathOf(true, locale, namespace);
 
                 fs.mkdirSync(localeNamespacePath, {
                     recursive: true
@@ -144,7 +144,7 @@ class DocumentationGenerator extends Generator {
             }
         }
 
-        this._currentFunctionNames = currentFunctionNames;
+        this.#currentFunctionNames = currentFunctionNames;
     }
 
     /**
@@ -157,15 +157,15 @@ class DocumentationGenerator extends Generator {
             proxyParameterDescriptors
         } = proxyFunctionDescriptor;
 
-        this._currentFunctionNames.push(functionName);
+        this.#currentFunctionNames.push(functionName);
 
         // Localize functions JSON file.
-        for (const documentationResource of this._documentationResources) {
+        for (const documentationResource of this.#documentationResources) {
             const locale = documentationResource.locale;
 
-            const functionLocalization = proxyFunctionDescriptor.localizationsMap.get(locale) ?? DocumentationGenerator.MISSING_LOCALIZATION;
+            const functionLocalization = proxyFunctionDescriptor.localizationsMap.get(locale) ?? DocumentationGenerator.#MISSING_LOCALIZATION;
 
-            const f = fs.createWriteStream(this.pathOf(true, locale, namespace, `${functionLocalization.name}.md`));
+            const f = fs.createWriteStream(this.#pathOf(true, locale, namespace, `${functionLocalization.name}.md`));
 
             f.write("---\noutline: false\nnavbar: false\n---\n\n");
 
@@ -177,7 +177,7 @@ class DocumentationGenerator extends Generator {
                 f.write(`\n## ${documentationResource.parameters}\n\n`);
 
                 const parametersDocumentation: ParameterDocumentation[] = proxyParameterDescriptors.map((proxyParameterDescriptor) => {
-                    const parameterLocalization = proxyParameterDescriptor.localizationsMap.get(locale) ?? DocumentationGenerator.MISSING_LOCALIZATION;
+                    const parameterLocalization = proxyParameterDescriptor.localizationsMap.get(locale) ?? DocumentationGenerator.#MISSING_LOCALIZATION;
 
                     return {
                         ...parameterLocalization,
@@ -209,7 +209,7 @@ class DocumentationGenerator extends Generator {
             for (const locale of this.locales) {
                 const rootSidebarItems: DefaultTheme.SidebarItem[] = [];
 
-                for (const [namespace, functionNames] of this._namespaceFunctionNamesMap.entries()) {
+                for (const [namespace, functionNames] of this.#namespaceFunctionNamesMap.entries()) {
                     let currentSidebarItems: DefaultTheme.SidebarItem[];
 
                     if (namespace === undefined) {
@@ -229,12 +229,12 @@ class DocumentationGenerator extends Generator {
 
                         currentSidebarItems.push({
                             text: functionLocalizedName,
-                            link: this.pathOf(false, locale, namespace, `${functionLocalizedName}.md`)
+                            link: this.#pathOf(false, locale, namespace, `${functionLocalizedName}.md`)
                         });
                     }
                 }
 
-                fs.writeFileSync(`${this.pathOf(true, locale)}app-extension-sidebar.json`, JSON.stringify(rootSidebarItems, null, 2));
+                fs.writeFileSync(`${this.#pathOf(true, locale)}app-extension-sidebar.json`, JSON.stringify(rootSidebarItems, null, 2));
             }
         }
     }
