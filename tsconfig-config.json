@@ -1,4 +1,4 @@
 {
   "extends": "@aidc-toolkit/dev/tsconfig-template.json",
-  "include": ["eslint.config.ts", ".vitepress/config.mts"]
+  "include": ["eslint.config.ts", ".vitepress/config.ts"]
 }

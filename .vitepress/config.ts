@@ -1,9 +1,9 @@
 import { defineConfig } from "vitepress";
 import { withMermaid } from "vitepress-plugin-mermaid";
 import type { DefaultTheme } from "vitepress/theme";
-import apiSidebar from "../site/api/typedoc-sidebar.json";
+import apiSidebar from "../site/api/typedoc-sidebar.json" with { type: "json" };
 
-const demoSidebarItem: DefaultTheme.SidebarItem = {
+const demoItem: DefaultTheme.SidebarItem & DefaultTheme.NavItem = {
     text: "Demo",
     link: "/demo/",
     target: "_self"
@@ -14,7 +14,7 @@ const apiDemoSidebar: DefaultTheme.Sidebar = [
         text: "API",
         items: apiSidebar
     },
-    demoSidebarItem
+    demoItem
 ];
 
 // https://vitepress.dev/reference/site-config
@@ -44,7 +44,7 @@ export default withMermaid(defineConfig({
                 text: "API",
                 link: "/api/"
             },
-            demoSidebarItem
+            demoItem
         ],
 
         sidebar: {
