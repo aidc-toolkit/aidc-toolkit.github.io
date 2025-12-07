@@ -30,7 +30,7 @@
     "server-preview": "npm run build:dev && vitepress preview"
   },
   "devDependencies": {
-    "@aidc-toolkit/app-extension": "1.0.27-alpha.202512062338",
+    "@aidc-toolkit/app-extension": "1.0.27-alpha.202512071318",
     "@aidc-toolkit/core": "1.0.27-alpha.202512062221",
     "@aidc-toolkit/dev": "1.0.27-alpha.202512062221",
     "copy-files-from-to": "^3.13.0",
