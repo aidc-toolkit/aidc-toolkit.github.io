@@ -22,6 +22,14 @@ export default withMermaid(defineConfig({
     title: "AIDC Toolkit",
     description: "A comprehensive set of libraries for integrating Automatic Identification and Data Capture (AIDC) functionality into web-based applications",
 
+    sitemap: {
+        hostname: "https://aidc-toolkit.com",
+        transformItems(items) {
+            // Preview path is for development and testing only.
+            return items.filter(item => !item.url.startsWith("preview/"));
+        }
+    },
+
     srcDir: "./site",
 
     head: [

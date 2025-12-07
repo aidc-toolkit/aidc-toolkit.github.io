@@ -1,0 +1,5 @@
+# Preview path is for development and testing only.
+User-agent: *
+Disallow: /preview/
+
+Sitemap: https://aidc-toolkit.com/sitemap.xml
