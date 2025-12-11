@@ -1,8 +1,4 @@
 {
   "extends": "@aidc-toolkit/dev/tsconfig-template.json",
-  "include": ["./src/**/*"],
-  "compilerOptions": {
-    // Language and environment.
-    "experimentalDecorators": true
-  }
+  "include": ["./src/**/*"]
 }
