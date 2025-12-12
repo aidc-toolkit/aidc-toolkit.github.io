@@ -1,10 +1,11 @@
 /* eslint-disable no-console -- Console application. */
 
 import {
+    type ClassDescriptor,
+    type FunctionLocalization,
     Generator,
     type Localization,
-    type ProxyFunctionDescriptor,
-    type ProxyObjectDescriptor
+    type MethodDescriptor
 } from "@aidc-toolkit/app-extension";
 import { I18nEnvironments } from "@aidc-toolkit/core";
 import fs from "node:fs";
@@ -61,6 +62,15 @@ class DocumentationGenerator extends Generator {
     static readonly #MISSING_LOCALIZATION: Localization = {
         name: "*** MISSING LOCALIZATION ***",
         description: "** MISSING LOCALIZATION ***"
+    };
+
+    /**
+     * Dummy object for missing function localization; should never be required.
+     */
+    static readonly #MISSING_FUNCTION_LOCALIZATION: FunctionLocalization = {
+        ...DocumentationGenerator.#MISSING_LOCALIZATION,
+        documentationURL: "*** MISSING LOCALIZATION ***",
+        parametersMap: new Map()
     };
 
     /**
@@ -124,8 +134,8 @@ class DocumentationGenerator extends Generator {
     /**
      * @inheritDoc
      */
-    protected createProxyObject(proxyObjectDescriptor: ProxyObjectDescriptor): void {
-        const namespace = proxyObjectDescriptor.namespace;
+    protected createProxyObject(classDescriptor: ClassDescriptor): void {
+        const namespace = classDescriptor.namespace;
 
         let currentFunctionNames = this.#namespaceFunctionNamesMap.get(namespace);
 
@@ -150,12 +160,9 @@ class DocumentationGenerator extends Generator {
     /**
      * @inheritDoc
      */
-    protected createProxyFunction(proxyFunctionDescriptor: ProxyFunctionDescriptor): void {
-        const {
-            namespace,
-            functionName,
-            proxyParameterDescriptors
-        } = proxyFunctionDescriptor;
+    protected createProxyFunction(classDescriptor: ClassDescriptor, methodDescriptor: MethodDescriptor, functionLocalizationsMap: ReadonlyMap<string, FunctionLocalization>): void {
+        const namespace = classDescriptor.namespace;
+        const functionName = methodDescriptor.functionName;
 
         this.#currentFunctionNames.push(functionName);
 
@@ -163,7 +170,7 @@ class DocumentationGenerator extends Generator {
         for (const documentationResource of this.#documentationResources) {
             const locale = documentationResource.locale;
 
-            const functionLocalization = proxyFunctionDescriptor.localizationsMap.get(locale) ?? DocumentationGenerator.#MISSING_LOCALIZATION;
+            const functionLocalization = functionLocalizationsMap.get(locale) ?? DocumentationGenerator.#MISSING_FUNCTION_LOCALIZATION;
 
             const f = fs.createWriteStream(this.#pathOf(true, locale, namespace, `${functionLocalization.name}.md`));
 
@@ -173,15 +180,15 @@ class DocumentationGenerator extends Generator {
 
             f.write(`${functionLocalization.description}\n`);
 
-            if (proxyParameterDescriptors.length !== 0) {
+            if (methodDescriptor.parameterDescriptors.length !== 0) {
                 f.write(`\n## ${documentationResource.parameters}\n\n`);
 
-                const parametersDocumentation: ParameterDocumentation[] = proxyParameterDescriptors.map((proxyParameterDescriptor) => {
-                    const parameterLocalization = proxyParameterDescriptor.localizationsMap.get(locale) ?? DocumentationGenerator.#MISSING_LOCALIZATION;
+                const parametersDocumentation: ParameterDocumentation[] = methodDescriptor.parameterDescriptors.map((parameterDescriptor) => {
+                    const parameterLocalization = functionLocalization.parametersMap.get(parameterDescriptor.name) ?? DocumentationGenerator.#MISSING_LOCALIZATION;
 
                     return {
                         ...parameterLocalization,
-                        type: documentationResource.types[proxyParameterDescriptor.parameterDescriptor.type]
+                        type: documentationResource.types[parameterDescriptor.type]
                     };
                 });
 
@@ -225,7 +232,7 @@ class DocumentationGenerator extends Generator {
                     }
 
                     for (const functionName of functionNames) {
-                        const functionLocalizedName = this.getFunctionLocalization(`${namespace === undefined ? "" : `${namespace}.`}${functionName}`, locale).name;
+                        const functionLocalizedName = this.getFunctionLocalization(locale, `${namespace === undefined ? "" : `${namespace}.`}${functionName}`).name;
 
                         currentSidebarItems.push({
                             text: functionLocalizedName,
