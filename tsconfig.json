@@ -1,4 +1,5 @@
 {
+  "extends": "@aidc-toolkit/dev/tsconfig-template.json",
   "include": [],
   "references": [
     {
