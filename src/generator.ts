@@ -106,7 +106,8 @@ class DocumentationGenerator extends Generator {
      * @returns
      * Path.
      */
-    #pathOf(relative: boolean, locale: string, namespace: string | undefined = undefined, fileName: string | undefined = undefined): string {
+    // eslint-disable-next-line @typescript-eslint/no-useless-default-assignment -- Undefined is necessary to allow bypass of namespace.
+    #pathOf(relative: boolean, locale: string, namespace: string | undefined = undefined, fileName?: string): string {
         return `${relative ? "site/" : "/"}${locale === this.defaultLocale ? "" : `${locale}/`}${DocumentationGenerator.#OUTPUT_PATH}${namespace === undefined ? "" : `${namespace}/`}${fileName ?? ""}`;
     }
 
