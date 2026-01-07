@@ -248,9 +248,9 @@ class DocumentationGenerator extends Generator {
     }
 }
 
-i18nDocInit(I18nEnvironments.CLI).then(async () => {
-    await new DocumentationGenerator().generate();
-}).catch((e: unknown) => {
+i18nDocInit(I18nEnvironments.CLI).then(async () =>
+    new DocumentationGenerator().generate()
+).catch((e: unknown) => {
     console.error(e);
     process.exit(1);
 });
