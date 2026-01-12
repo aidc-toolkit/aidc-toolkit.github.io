@@ -10,7 +10,7 @@ import {
 import { I18nEnvironments } from "@aidc-toolkit/core";
 import fs from "node:fs";
 import type { DefaultTheme } from "vitepress/theme";
-import { type DocLocaleResources, docResources, i18nDocInit, i18nextDoc } from "./locale/i18n.js";
+import { type DocLocaleResources, docResourceBundle, i18nDocInit, i18nextDoc } from "./locale/i18n.js";
 
 /**
  * Documentation as structured in locale strings.
@@ -146,7 +146,7 @@ class DocumentationGenerator extends Generator {
             this.#namespaceFunctionNamesMap.set(namespace, currentFunctionNames);
 
             // Create locale namespace directory if it doesn't exist.
-            for (const locale of Object.keys(docResources)) {
+            for (const locale of Object.keys(docResourceBundle)) {
                 const localeNamespacePath = this.#pathOf(true, locale, namespace);
 
                 fs.mkdirSync(localeNamespacePath, {

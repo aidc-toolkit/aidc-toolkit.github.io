@@ -1,5 +1,5 @@
-import { appExtensionResources, i18nAppExtensionInit } from "@aidc-toolkit/app-extension";
-import { type I18nEnvironment, i18nFinalizeInit } from "@aidc-toolkit/core";
+import { i18nAppExtensionInit } from "@aidc-toolkit/app-extension";
+import { i18nCoreInit, type I18nEnvironment, i18nInit } from "@aidc-toolkit/core";
 import i18next, { type i18n, type Resource } from "i18next";
 import enLocaleResources from "./en/locale-resources.js";
 import frLocaleResources from "./fr/locale-resources.js";
@@ -12,9 +12,9 @@ export const docNS = "aidct_doc";
 export type DocLocaleResources = typeof enLocaleResources;
 
 /**
- * Documentation resources.
+ * Documentation resource bundle.
  */
-export const docResources: Resource = {
+export const docResourceBundle: Resource = {
     en: {
         aidct_doc: enLocaleResources
     },
@@ -34,8 +34,10 @@ export const i18nextDoc: i18n = i18next.createInstance();
  *
  * @param debug
  * Debug setting.
+ *
+ * @returns
+ * Documentation resource bundle.
  */
-export async function i18nDocInit(environment: I18nEnvironment, debug = false): Promise<void> {
-    await i18nAppExtensionInit(environment, debug);
-    await i18nFinalizeInit(i18nextDoc, environment, debug, docNS, appExtensionResources, docResources);
+export async function i18nDocInit(environment: I18nEnvironment, debug = false): Promise<Resource> {
+    return i18nInit(i18nextDoc, environment, debug, docNS, docResourceBundle, i18nCoreInit, i18nAppExtensionInit);
 }
