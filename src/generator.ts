@@ -114,7 +114,7 @@ class DocumentationGenerator extends Generator {
     /**
      * @inheritDoc
      */
-    protected initialize(): void {
+    protected override initialize(): void {
         for (const locale of this.locales) {
             this.#documentationResources.push({
                 locale,
@@ -135,7 +135,7 @@ class DocumentationGenerator extends Generator {
     /**
      * @inheritDoc
      */
-    protected createProxyObject(classDescriptor: ClassDescriptor): void {
+    protected override createProxyObject(classDescriptor: ClassDescriptor): void {
         const namespace = classDescriptor.namespace;
 
         let currentFunctionNames = this.#namespaceFunctionNamesMap.get(namespace);
@@ -161,7 +161,7 @@ class DocumentationGenerator extends Generator {
     /**
      * @inheritDoc
      */
-    protected createProxyFunction(classDescriptor: ClassDescriptor, methodDescriptor: MethodDescriptor, functionLocalizationsMap: ReadonlyMap<string, FunctionLocalization>): void {
+    protected override createProxyFunction(classDescriptor: ClassDescriptor, methodDescriptor: MethodDescriptor, functionLocalizationsMap: ReadonlyMap<string, FunctionLocalization>): void {
         const namespace = classDescriptor.namespace;
         const functionName = methodDescriptor.functionName;
 
@@ -212,7 +212,7 @@ class DocumentationGenerator extends Generator {
     /**
      * @inheritDoc
      */
-    protected finalize(success: boolean): void {
+    protected override finalize(success: boolean): void {
         if (success) {
             for (const locale of this.locales) {
                 const rootSidebarItems: DefaultTheme.SidebarItem[] = [];
