@@ -1,5 +1,3 @@
-/* eslint-disable no-console -- Console application. */
-
 import {
     type ClassDescriptor,
     type FunctionLocalization,
@@ -248,9 +246,11 @@ class DocumentationGenerator extends Generator {
     }
 }
 
+const generator = new DocumentationGenerator();
+
 i18nDocInit(I18nEnvironments.CLI).then(async () =>
-    new DocumentationGenerator().generate()
+    generator.generate()
 ).catch((e: unknown) => {
-    console.error(e);
+    generator.logger.error(e);
     process.exit(1);
 });
