@@ -160,50 +160,53 @@ class DocumentationGenerator extends Generator {
      * @inheritDoc
      */
     protected override createProxyFunction(classDescriptor: ClassDescriptor, methodDescriptor: MethodDescriptor, functionLocalizationsMap: ReadonlyMap<string, FunctionLocalization>): void {
-        const namespace = classDescriptor.namespace;
-        const functionName = methodDescriptor.functionName;
+        // Hidden methods are not documented.
+        if (methodDescriptor.isHidden !== true) {
+            const namespace = classDescriptor.namespace;
+            const functionName = methodDescriptor.functionName;
 
-        this.#currentFunctionNames.push(functionName);
+            this.#currentFunctionNames.push(functionName);
 
-        // Localize functions JSON file.
-        for (const documentationResource of this.#documentationResources) {
-            const locale = documentationResource.locale;
+            // Localize functions JSON file.
+            for (const documentationResource of this.#documentationResources) {
+                const locale = documentationResource.locale;
 
-            const functionLocalization = functionLocalizationsMap.get(locale) ?? DocumentationGenerator.#MISSING_FUNCTION_LOCALIZATION;
+                const functionLocalization = functionLocalizationsMap.get(locale) ?? DocumentationGenerator.#MISSING_FUNCTION_LOCALIZATION;
 
-            const f = fs.createWriteStream(this.#pathOf(true, locale, namespace, `${functionLocalization.name}.md`));
+                const f = fs.createWriteStream(this.#pathOf(true, locale, namespace, `${functionLocalization.name}.md`));
 
-            f.write("---\noutline: false\nnavbar: false\n---\n\n");
+                f.write("---\noutline: false\nnavbar: false\n---\n\n");
 
-            f.write(`# ${namespace === undefined ? "" : `${namespace}.`}${functionLocalization.name}\n\n`);
+                f.write(`# ${namespace === undefined ? "" : `${namespace}.`}${functionLocalization.name}\n\n`);
 
-            f.write(`${functionLocalization.description}\n`);
+                f.write(`${functionLocalization.description}\n`);
 
-            if (methodDescriptor.parameterDescriptors.length !== 0) {
-                f.write(`\n## ${documentationResource.parameters}\n\n`);
+                if (methodDescriptor.parameterDescriptors.length !== 0) {
+                    f.write(`\n## ${documentationResource.parameters}\n\n`);
 
-                const parametersDocumentation: ParameterDocumentation[] = methodDescriptor.parameterDescriptors.map((parameterDescriptor) => {
-                    const parameterLocalization = functionLocalization.parametersMap.get(parameterDescriptor.name) ?? DocumentationGenerator.#MISSING_LOCALIZATION;
+                    const parametersDocumentation: ParameterDocumentation[] = methodDescriptor.parameterDescriptors.map((parameterDescriptor) => {
+                        const parameterLocalization = functionLocalization.parametersMap.get(parameterDescriptor.name) ?? DocumentationGenerator.#MISSING_LOCALIZATION;
 
-                    return {
-                        ...parameterLocalization,
-                        type: documentationResource.types[parameterDescriptor.type]
-                    };
-                });
+                        return {
+                            ...parameterLocalization,
+                            type: documentationResource.types[parameterDescriptor.type]
+                        };
+                    });
 
-                const maximumNameLength = Math.max(documentationResource.name.length, ...parametersDocumentation.map(parameterDocumentation => parameterDocumentation.name.length));
-                const maximumTypeLength = Math.max(documentationResource.type.length, ...parametersDocumentation.map(parameterDocumentation => parameterDocumentation.type.length));
-                const maximumDescriptionLength = Math.max(documentationResource.description.length, ...parametersDocumentation.map(parameterDocumentation => parameterDocumentation.description.length));
+                    const maximumNameLength = Math.max(documentationResource.name.length, ...parametersDocumentation.map(parameterDocumentation => parameterDocumentation.name.length));
+                    const maximumTypeLength = Math.max(documentationResource.type.length, ...parametersDocumentation.map(parameterDocumentation => parameterDocumentation.type.length));
+                    const maximumDescriptionLength = Math.max(documentationResource.description.length, ...parametersDocumentation.map(parameterDocumentation => parameterDocumentation.description.length));
 
-                f.write(`| ${documentationResource.name.padEnd(maximumNameLength)} | ${documentationResource.type.padEnd(maximumTypeLength)} | ${documentationResource.description.padEnd(maximumDescriptionLength)} |\n`);
-                f.write(`|-${"".padEnd(maximumNameLength, "-")}-|-${"".padEnd(maximumTypeLength, "-")}-|-${"".padEnd(maximumDescriptionLength, "-")}-|\n`);
+                    f.write(`| ${documentationResource.name.padEnd(maximumNameLength)} | ${documentationResource.type.padEnd(maximumTypeLength)} | ${documentationResource.description.padEnd(maximumDescriptionLength)} |\n`);
+                    f.write(`|-${"".padEnd(maximumNameLength, "-")}-|-${"".padEnd(maximumTypeLength, "-")}-|-${"".padEnd(maximumDescriptionLength, "-")}-|\n`);
 
-                for (const parameterDocumentation of parametersDocumentation) {
-                    f.write(`| ${parameterDocumentation.name.padEnd(maximumNameLength)} | ${parameterDocumentation.type.padEnd(maximumTypeLength)} | ${parameterDocumentation.description.padEnd(maximumDescriptionLength)} |\n`);
+                    for (const parameterDocumentation of parametersDocumentation) {
+                        f.write(`| ${parameterDocumentation.name.padEnd(maximumNameLength)} | ${parameterDocumentation.type.padEnd(maximumTypeLength)} | ${parameterDocumentation.description.padEnd(maximumDescriptionLength)} |\n`);
+                    }
                 }
-            }
 
-            f.end();
+                f.end();
+            }
         }
     }
 
