@@ -19,6 +19,13 @@ const apiDemoSidebar: DefaultTheme.Sidebar = [
 
 // https://vitepress.dev/reference/site-config
 export default withMermaid(defineConfig({
+    // https://vitejs.dev/config/
+    vite: {
+        build: {
+            chunkSizeWarningLimit: 1024
+        }
+    },
+
     title: "AIDC Toolkit",
     description: "A comprehensive set of libraries for integrating Automatic Identification and Data Capture (AIDC) functionality into web-based applications",
 
