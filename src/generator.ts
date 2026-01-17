@@ -2,16 +2,56 @@ import {
     type ClassDescriptor,
     type FunctionLocalization,
     Generator,
-    type Localization,
-    type MethodDescriptor
+    type MethodDescriptor,
+    Multiplicities
 } from "@aidc-toolkit/app-extension";
 import { I18nEnvironments } from "@aidc-toolkit/core";
 import fs from "node:fs";
 import type { DefaultTheme } from "vitepress/theme";
-import { type DocLocaleResources, docResourceBundle, i18nDocInit, i18nextDoc } from "./locale/i18n.js";
+import { type DocLocaleResources, i18nDocInit, i18nextDoc } from "./locale/i18n.js";
 
 /**
- * Documentation as structured in locale strings.
+ * Function node.
+ */
+interface FunctionNode {
+    /**
+     * Function localizations map, keyed on locale.
+     */
+    readonly functionLocalizationsMap: ReadonlyMap<string, FunctionLocalization>;
+}
+
+/**
+ * Category node.
+ */
+interface CategoryNode {
+    /**
+     * Category localizations map, keyed on locale.
+     */
+    readonly categoryLocalizationsMap: ReadonlyMap<string, string>;
+
+    /**
+     * Function nodes.
+     */
+    readonly functionNodes: FunctionNode[];
+}
+
+/**
+ * Namespace node.
+ */
+interface NamespaceNode {
+    /**
+     * Namespace.
+     */
+    readonly namespace: string | undefined;
+
+    /**
+     * Category nodes.
+     */
+    readonly categoryNodes: CategoryNode[];
+}
+
+/**
+ * Documentation as structured in locale resources.
  */
 type Documentation = DocLocaleResources["Documentation"];
 
@@ -55,36 +95,24 @@ class DocumentationGenerator extends Generator {
     static readonly #OUTPUT_PATH = "app-extension/";
 
     /**
-     * Dummy object for missing localization; should never be required.
-     */
-    static readonly #MISSING_LOCALIZATION: Localization = {
-        name: "*** MISSING LOCALIZATION ***",
-        description: "** MISSING LOCALIZATION ***"
-    };
-
-    /**
-     * Dummy object for missing function localization; should never be required.
-     */
-    static readonly #MISSING_FUNCTION_LOCALIZATION: FunctionLocalization = {
-        ...DocumentationGenerator.#MISSING_LOCALIZATION,
-        documentationURL: "*** MISSING LOCALIZATION ***",
-        parametersMap: new Map()
-    };
-
-    /**
      * Documentation resources.
      */
     readonly #documentationResources: DocumentationResource[] = [];
 
     /**
-     * Function names mapped by namespace.
+     * Namespace nodes.
      */
-    readonly #namespaceFunctionNamesMap = new Map<string | undefined, string[]>();
+    readonly #namespaceNodes: NamespaceNode[] = [];
 
     /**
-     * Current function names reference while building function names mapped by namespace.
+     * Current namespace node.
      */
-    #currentFunctionNames!: string[];
+    #currentNamespaceNode!: NamespaceNode;
+
+    /**
+     * Current category node.
+     */
+    #currentCategoryNode!: CategoryNode;
 
     /**
      * Get the path of a locale, optional namespace, and optional file name.
@@ -122,10 +150,17 @@ class DocumentationGenerator extends Generator {
                 })
             });
 
+            const rootPath = this.#pathOf(true, locale);
+
             // Remove previously generated contents.
-            fs.rmSync(this.#pathOf(true, locale), {
+            fs.rmSync(rootPath, {
                 recursive: true,
                 force: true
+            });
+
+            // Recreate directory.
+            fs.mkdirSync(rootPath, {
+                recursive: true
             });
         }
     }
@@ -133,27 +168,49 @@ class DocumentationGenerator extends Generator {
     /**
      * @inheritDoc
      */
-    protected override createProxyObject(classDescriptor: ClassDescriptor): void {
-        const namespace = classDescriptor.namespace;
+    protected override createNamespace(namespace: string | undefined): void {
+        this.#currentNamespaceNode = {
+            namespace,
+            categoryNodes: []
+        };
 
-        let currentFunctionNames = this.#namespaceFunctionNamesMap.get(namespace);
+        this.#namespaceNodes.push(this.#currentNamespaceNode);
 
-        if (currentFunctionNames === undefined) {
-            currentFunctionNames = [];
+        // Create locale namespace directories.
+        for (const locale of this.locales) {
+            fs.mkdirSync(this.#pathOf(true, locale, namespace), {
+                recursive: true
+            });
 
-            this.#namespaceFunctionNamesMap.set(namespace, currentFunctionNames);
+            const f = fs.createWriteStream(this.#pathOf(true, locale, namespace, "index.md"));
 
-            // Create locale namespace directory if it doesn't exist.
-            for (const locale of Object.keys(docResourceBundle)) {
-                const localeNamespacePath = this.#pathOf(true, locale, namespace);
+            f.write("---\noutline: false\nnavbar: false\n---\n\n");
 
-                fs.mkdirSync(localeNamespacePath, {
-                    recursive: true
-                });
-            }
+            f.write(`# ${i18nextDoc.t(namespace === undefined ? "Documentation.rootNamespace" : "Documentation.namespace", {
+                lng: locale,
+                namespace
+            })}\n\n`);
+
+            f.write(`${i18nextDoc.t("Documentation.introduction")}\n`);
         }
+    }
 
-        this.#currentFunctionNames = currentFunctionNames;
+    /**
+     * @inheritDoc
+     */
+    protected override createCategory(_namespace: string | undefined, _category: string, categoryLocalizationsMap: ReadonlyMap<string, string>): void {
+        this.#currentCategoryNode = {
+            categoryLocalizationsMap,
+            functionNodes: []
+        };
+
+        this.#currentNamespaceNode.categoryNodes.push(this.#currentCategoryNode);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected override createProxyObject(): void {
     }
 
     /**
@@ -163,15 +220,17 @@ class DocumentationGenerator extends Generator {
         // Hidden methods are not documented.
         if (methodDescriptor.isHidden !== true) {
             const namespace = classDescriptor.namespace;
-            const functionName = methodDescriptor.functionName;
 
-            this.#currentFunctionNames.push(functionName);
+            this.#currentCategoryNode.functionNodes.push({
+                functionLocalizationsMap
+            });
 
-            // Localize functions JSON file.
+            // Localize functions documentation.
             for (const documentationResource of this.#documentationResources) {
                 const locale = documentationResource.locale;
 
-                const functionLocalization = functionLocalizationsMap.get(locale) ?? DocumentationGenerator.#MISSING_FUNCTION_LOCALIZATION;
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- Guaranteed by Generator class.
+                const functionLocalization = functionLocalizationsMap.get(locale)!;
 
                 const f = fs.createWriteStream(this.#pathOf(true, locale, namespace, `${functionLocalization.name}.md`));
 
@@ -181,14 +240,44 @@ class DocumentationGenerator extends Generator {
 
                 f.write(`${functionLocalization.description}\n`);
 
+                let anyArrayParameter = false;
+                let anyMatrixParameter = false;
+                let drivingParameterName: string | undefined = undefined;
+
                 if (methodDescriptor.parameterDescriptors.length !== 0) {
                     f.write(`\n## ${documentationResource.parameters}\n\n`);
 
                     const parametersDocumentation: ParameterDocumentation[] = methodDescriptor.parameterDescriptors.map((parameterDescriptor) => {
-                        const parameterLocalization = functionLocalization.parametersMap.get(parameterDescriptor.name) ?? DocumentationGenerator.#MISSING_LOCALIZATION;
+                        const parameterName = parameterDescriptor.name;
+
+                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- Guaranteed by Generator class.
+                        const parameterLocalization = functionLocalization.parametersMap.get(parameterName)!;
+
+                        let parameterNameSuffix: string;
+
+                        if (parameterDescriptor.multiplicity === Multiplicities.Singleton) {
+                            parameterNameSuffix = "";
+                        } else {
+                            if (parameterDescriptor.multiplicity !== Multiplicities.Matrix) {
+                                parameterNameSuffix = "<sup>*</sup>";
+                                anyArrayParameter = true;
+                            } else {
+                                parameterNameSuffix = "<sup>**</sup>";
+                                anyMatrixParameter = true;
+                            }
+
+                            if (parameterDescriptor.multiplicity !== Multiplicities.SingletonArray) {
+                                if (drivingParameterName !== undefined) {
+                                    throw new Error(`Parameters ${drivingParameterName} and ${parameterName} both identified as driving parameters`);
+                                }
+
+                                drivingParameterName = parameterName;
+                            }
+                        }
 
                         return {
-                            ...parameterLocalization,
+                            name: `${parameterName}${parameterNameSuffix}`,
+                            description: parameterLocalization.description,
                             type: documentationResource.types[parameterDescriptor.type]
                         };
                     });
@@ -202,6 +291,30 @@ class DocumentationGenerator extends Generator {
 
                     for (const parameterDocumentation of parametersDocumentation) {
                         f.write(`| ${parameterDocumentation.name.padEnd(maximumNameLength)} | ${parameterDocumentation.type.padEnd(maximumTypeLength)} | ${parameterDocumentation.description.padEnd(maximumDescriptionLength)} |\n`);
+                    }
+
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
+                    if (anyArrayParameter) {
+                        f.write(`\n${i18nextDoc.t("Documentation.parameterAcceptsArray")}\n`);
+                    }
+
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
+                    if (anyMatrixParameter) {
+                        f.write(`\n${i18nextDoc.t("Documentation.parameterAcceptsMatrix")}\n`);
+                    }
+
+                    if (methodDescriptor.multiplicity === Multiplicities.Array) {
+                        f.write(`\n${i18nextDoc.t("Documentation.functionReturnsArray")}\n`);
+                    } else if (methodDescriptor.multiplicity === Multiplicities.Matrix) {
+                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
+                        if (drivingParameterName === undefined) {
+                            f.write(`\n${i18nextDoc.t("Documentation.functionReturnsMatrix")}\n`);
+                        } else {
+                            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
+                            f.write(`\n${i18nextDoc.t(!anyMatrixParameter ? "Documentation.functionReturnsArrayMatrix" : "Documentation.functionReturnsMatrixMatrix", {
+                                drivingParameterName
+                            })}\n`);
+                        }
                     }
                 }
 
@@ -218,28 +331,42 @@ class DocumentationGenerator extends Generator {
             for (const locale of this.locales) {
                 const rootSidebarItems: DefaultTheme.SidebarItem[] = [];
 
-                for (const [namespace, functionNames] of this.#namespaceFunctionNamesMap.entries()) {
-                    let currentSidebarItems: DefaultTheme.SidebarItem[];
+                for (const namespaceNode of this.#namespaceNodes) {
+                    const namespace = namespaceNode.namespace;
+
+                    let namespaceSidebarItems: DefaultTheme.SidebarItem[];
 
                     if (namespace === undefined) {
-                        currentSidebarItems = rootSidebarItems;
+                        namespaceSidebarItems = rootSidebarItems;
                     } else {
-                        currentSidebarItems = [];
+                        namespaceSidebarItems = [];
 
                         rootSidebarItems.push({
                             text: namespace,
-                            collapsed: true,
-                            items: currentSidebarItems
+                            collapsed: false,
+                            items: namespaceSidebarItems
                         });
                     }
 
-                    for (const functionName of functionNames) {
-                        const functionLocalizedName = this.getFunctionLocalization(locale, `${namespace === undefined ? "" : `${namespace}.`}${functionName}`).name;
+                    for (const categoryNode of namespaceNode.categoryNodes) {
+                        const categorySidebarItems: DefaultTheme.SidebarItem[] = [];
 
-                        currentSidebarItems.push({
-                            text: functionLocalizedName,
-                            link: this.#pathOf(false, locale, namespace, `${functionLocalizedName}.md`)
+                        namespaceSidebarItems.push({
+                            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- Guaranteed by Generator class.
+                            text: categoryNode.categoryLocalizationsMap.get(locale)!,
+                            collapsed: true,
+                            items: categorySidebarItems
                         });
+
+                        for (const functionNode of categoryNode.functionNodes) {
+                            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- Guaranteed by Generator class.
+                            const functionLocalizedName = functionNode.functionLocalizationsMap.get(locale)!.name;
+
+                            categorySidebarItems.push({
+                                text: functionLocalizedName,
+                                link: this.#pathOf(false, locale, namespace, `${functionLocalizedName}.md`)
+                            });
+                        }
                     }
                 }
 
