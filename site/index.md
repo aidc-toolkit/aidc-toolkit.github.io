@@ -6,7 +6,7 @@ hero:
   name: "AIDC Toolkit"
   tagline: "A comprehensive set of libraries for integrating Automatic Identification and Data Capture (AIDC) functionality into web-based applications"
   image:
-    src: "resource/icon-512.png"
+    src: "resource/icon-256.png"
     alt: "AIDC Toolkit"
 ---
 

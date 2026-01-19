@@ -28,12 +28,12 @@ export default withMermaid(defineConfig({
             viteStaticCopy({
                 targets: [
                     {
-                        src: ["../../core/resource/icon-256.png", "../../core/resource/icon-512.png"],
-                        dest: "site/public/resource"
+                        src: "../../core/resource/icon-256.png",
+                        dest: "resource"
                     },
                     {
                         src: "../../demo/dist/**/*",
-                        dest: "site/public/demo/"
+                        dest: "demo"
                     }
                 ]
             })
