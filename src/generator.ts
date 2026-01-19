@@ -178,6 +178,10 @@ class DocumentationGenerator extends Generator {
 
         // Create locale namespace directories.
         for (const locale of this.locales) {
+            const lngOption = {
+                lng: locale
+            } as const;
+
             fs.mkdirSync(this.#pathOf(true, locale, namespace), {
                 recursive: true
             });
@@ -187,11 +191,11 @@ class DocumentationGenerator extends Generator {
             f.write("---\noutline: false\nnavbar: false\n---\n\n");
 
             f.write(`# ${i18nextDoc.t(namespace === undefined ? "Documentation.rootNamespace" : "Documentation.namespace", {
-                lng: locale,
+                ...lngOption,
                 namespace
             })}\n\n`);
 
-            f.write(`${i18nextDoc.t("Documentation.introduction")}\n`);
+            f.write(`${i18nextDoc.t("Documentation.introduction", lngOption)}\n`);
         }
     }
 
@@ -229,6 +233,10 @@ class DocumentationGenerator extends Generator {
             for (const documentationResource of this.#documentationResources) {
                 const locale = documentationResource.locale;
 
+                const lngOption = {
+                    lng: locale
+                } as const;
+
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- Guaranteed by Generator class.
                 const functionLocalization = functionLocalizationsMap.get(locale)!;
 
@@ -248,10 +256,10 @@ class DocumentationGenerator extends Generator {
                     f.write(`\n## ${documentationResource.parameters}\n\n`);
 
                     const parametersDocumentation: ParameterDocumentation[] = methodDescriptor.parameterDescriptors.map((parameterDescriptor) => {
-                        const parameterName = parameterDescriptor.name;
-
                         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- Guaranteed by Generator class.
-                        const parameterLocalization = functionLocalization.parametersMap.get(parameterName)!;
+                        const parameterLocalization = functionLocalization.parametersMap.get(parameterDescriptor.name)!;
+
+                        const parameterName = parameterLocalization.name;
 
                         let parameterNameSuffix: string;
 
@@ -295,23 +303,24 @@ class DocumentationGenerator extends Generator {
 
                     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
                     if (anyArrayParameter) {
-                        f.write(`\n${i18nextDoc.t("Documentation.parameterAcceptsArray")}\n`);
+                        f.write(`\n${i18nextDoc.t("Documentation.parameterAcceptsArray", lngOption)}\n`);
                     }
 
                     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
                     if (anyMatrixParameter) {
-                        f.write(`\n${i18nextDoc.t("Documentation.parameterAcceptsMatrix")}\n`);
+                        f.write(`\n${i18nextDoc.t("Documentation.parameterAcceptsMatrix", lngOption)}\n`);
                     }
 
                     if (methodDescriptor.multiplicity === Multiplicities.Array) {
-                        f.write(`\n${i18nextDoc.t("Documentation.functionReturnsArray")}\n`);
+                        f.write(`\n${i18nextDoc.t("Documentation.functionReturnsArray", lngOption)}\n`);
                     } else if (methodDescriptor.multiplicity === Multiplicities.Matrix) {
                         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
                         if (drivingParameterName === undefined) {
-                            f.write(`\n${i18nextDoc.t("Documentation.functionReturnsMatrix")}\n`);
+                            f.write(`\n${i18nextDoc.t("Documentation.functionReturnsMatrix", lngOption)}\n`);
                         } else {
                             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
                             f.write(`\n${i18nextDoc.t(!anyMatrixParameter ? "Documentation.functionReturnsArrayMatrix" : "Documentation.functionReturnsMatrixMatrix", {
+                                ...lngOption,
                                 drivingParameterName
                             })}\n`);
                         }
