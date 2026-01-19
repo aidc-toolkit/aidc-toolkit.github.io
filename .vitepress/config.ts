@@ -1,3 +1,4 @@
+import { viteStaticCopy } from "vite-plugin-static-copy";
 import { defineConfig } from "vitepress";
 import { withMermaid } from "vitepress-plugin-mermaid";
 import type { DefaultTheme } from "vitepress/theme";
@@ -23,6 +24,21 @@ const apiDemoSidebar: DefaultTheme.Sidebar = [
 export default withMermaid(defineConfig({
     // https://vitejs.dev/config/
     vite: {
+        plugins: [
+            viteStaticCopy({
+                targets: [
+                    {
+                        src: ["../../core/resource/icon-256.png", "../../core/resource/icon-512.png"],
+                        dest: "site/public/resource"
+                    },
+                    {
+                        src: "../../demo/dist/**/*",
+                        dest: "site/public/demo/"
+                    }
+                ]
+            })
+        ],
+
         build: {
             chunkSizeWarningLimit: 1024
         }
