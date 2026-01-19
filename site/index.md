@@ -22,6 +22,12 @@ The AIDC Toolkit is a comprehensive set of libraries for integrating Automatic I
 > 
 > Skip the boring stuff! Go straight to the [API documentation](api/) or the [demo](demo/){target="_self"}.
 
+## About the Author
+
+Kevin Dean is a technology strategist with extensive experience in supply, finance, cybersecurity, and intellectual property. He is active in supply chain standards development at the Canadian, North American, and global levels and a member of the GS1 Architecture Group, which is responsible for the technical oversight of the GS1 system of supply chain standards. He is also involved in standards development at W3C, notably in Decentralized Identifiers, Verifiable Credentials, and security.
+
+Kevin can be reached [by email](mailto:Kevin.Dean@datadevelopment.com) or [via LinkedIn](https://www.linkedin.com/in/kdean/).
+
 ## Roadmap
 
 | Release | Date   | Features                                                                                                     |
