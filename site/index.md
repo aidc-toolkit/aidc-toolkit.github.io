@@ -12,10 +12,6 @@ hero:
 
 # Overview
 
-> [!WARNING]
-> 
-> **This software is in beta**, with production release is scheduled for 2025Q4. To follow the status of this and other projects, go to the AIDC Toolkit [projects](https://github.com/orgs/aidc-toolkit/projects) page.
-
 The AIDC Toolkit is a comprehensive set of libraries for integrating Automatic Identification and Data Capture (AIDC) functionality into web-based applications. The libraries are published as [npm packages](https://www.npmjs.com/search?q=%40aidc-toolkit) and full source code is available on [GitHub](https://github.com/aidc-toolkit).
 
 > [!TIP]
