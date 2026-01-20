@@ -90,36 +90,42 @@ jobs:
         with:
           project: dev
           branch: ${{ steps.ref-branch.outputs.branch }}
+          token: ${{ secrets.ORGANIZATION_READ_ONLY }}
 
       - name: Build core
         uses: ./.github/actions/build-project-doc
         with:
           project: core
           branch: ${{ steps.ref-branch.outputs.branch }}
+          token: ${{ secrets.ORGANIZATION_READ_ONLY }}
 
       - name: Build utility
         uses: ./.github/actions/build-project-doc
         with:
           project: utility
           branch: ${{ steps.ref-branch.outputs.branch }}
+          token: ${{ secrets.ORGANIZATION_READ_ONLY }}
 
       - name: Build gs1
         uses: ./.github/actions/build-project-doc
         with:
           project: gs1
           branch: ${{ steps.ref-branch.outputs.branch }}
+          token: ${{ secrets.ORGANIZATION_READ_ONLY }}
 
       - name: Build demo
         uses: ./.github/actions/build-project-doc
         with:
           project: demo
           branch: ${{ steps.ref-branch.outputs.branch }}
+          token: ${{ secrets.ORGANIZATION_READ_ONLY }}
 
       - name: Build app-extension
         uses: ./.github/actions/build-project-doc
         with:
           project: app-extension
           branch: ${{ steps.ref-branch.outputs.branch }}
+          token: ${{ secrets.ORGANIZATION_READ_ONLY }}
 
       - name: Build microsoft-add-in
         uses: ./.github/actions/build-project-doc
