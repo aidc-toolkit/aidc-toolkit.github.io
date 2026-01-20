@@ -1,6 +1,6 @@
 {
   "name": "@aidc-toolkit/doc",
-  "version": "1.0.33-beta",
+  "version": "1.0.34-alpha",
   "description": "Documentation for AIDC Toolkit",
   "type": "module",
   "private": true,
@@ -21,16 +21,16 @@
   "scripts": {
     "lint": "eslint",
     "generate-app-extension-documentation": "tsx src/generator.ts",
-    "build:base": "typedoc && npm run generate-app-extension-documentation && vitepress build",
-    "build:alpha": "rimraf site/public && npm run build:base -- $*",
-    "build:doc": "npm run build:base -- $*",
+    "build:base": "typedoc && npm run generate-app-extension-documentation && vitepress build $*",
+    "build:alpha": "tsc --noEmit && npm run build:base",
+    "build:doc": "npm run build:base",
     "server": "vitepress dev",
-    "server-preview": "npm run build:alpha && vitepress preview"
+    "server-preview": "npm run build:doc && vitepress preview"
   },
   "devDependencies": {
-    "@aidc-toolkit/app-extension": "1.0.33-beta",
-    "@aidc-toolkit/core": "1.0.33-beta",
-    "@aidc-toolkit/dev": "1.0.33-beta",
+    "@aidc-toolkit/app-extension": "1.0.34-alpha.202601201808",
+    "@aidc-toolkit/core": "1.0.34-alpha.202601201753",
+    "@aidc-toolkit/dev": "1.0.34-alpha.202601201753",
     "mermaid": "^11.12.2",
     "typedoc": "^0.28.16",
     "typedoc-plugin-markdown": "^4.9.0",

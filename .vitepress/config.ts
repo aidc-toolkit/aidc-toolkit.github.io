@@ -34,6 +34,10 @@ export default withMermaid(defineConfig({
                     {
                         src: "../../demo/dist/**/*",
                         dest: "demo"
+                    },
+                    {
+                        src: "../../microsoft-add-in/dist/**/*",
+                        dest: "microsoft-add-in"
                     }
                 ]
             })
