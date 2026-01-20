@@ -23,6 +23,7 @@ runs:
         repository: aidc-toolkit/${{ inputs.project }}
         ref: ${{ inputs.branch }}
         path: ${{ inputs.project }}
+        token: ${{ secrets.ORGANIZATION_READ_ONLY }}
 
     - name: Build for documentation
       shell: bash
