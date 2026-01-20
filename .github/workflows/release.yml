@@ -126,6 +126,7 @@ jobs:
         with:
           project: microsoft-add-in
           branch: ${{ steps.ref-branch.outputs.branch }}
+          token: ${{ secrets.ORGANIZATION_READ_ONLY }}
 
       - name: Build doc
         uses: ./.github/actions/build-project-doc
