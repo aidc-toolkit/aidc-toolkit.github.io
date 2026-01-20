@@ -21,9 +21,9 @@
   "scripts": {
     "lint": "eslint",
     "generate-app-extension-documentation": "tsx src/generator.ts",
-    "build:base": "typedoc && npm run generate-app-extension-documentation && vitepress build $*",
-    "build:alpha": "tsc --noEmit && npm run build:base",
-    "build:doc": "npm run build:base",
+    "build:base": "typedoc && npm run generate-app-extension-documentation && vitepress build",
+    "build:alpha": "tsc --noEmit && npm run build:base -- $*",
+    "build:doc": "npm run build:base -- $*",
     "server": "vitepress dev",
     "server-preview": "npm run build:doc && vitepress preview"
   },
