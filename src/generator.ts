@@ -190,7 +190,7 @@ class DocumentationGenerator extends Generator {
 
             f.write("---\noutline: false\nnavbar: false\n---\n\n");
 
-            f.write(`# ${i18nextDoc.t(namespace === undefined ? "Documentation.rootNamespace" : "Documentation.namespace", {
+            f.write(`# ${i18nextDoc.t(namespace === undefined ? "Documentation.rootNamespaceTitle" : "Documentation.namespaceTitle", {
                 ...lngOption,
                 namespace
             })}\n\n`);
@@ -337,7 +337,8 @@ class DocumentationGenerator extends Generator {
      */
     protected override finalize(success: boolean): void {
         if (success) {
-            for (const locale of this.locales) {
+            for (const documentationResource of this.#documentationResources) {
+                const locale = documentationResource.locale;
                 const rootSidebarItems: DefaultTheme.SidebarItem[] = [];
 
                 for (const namespaceNode of this.#namespaceNodes) {
@@ -346,12 +347,18 @@ class DocumentationGenerator extends Generator {
                     let namespaceSidebarItems: DefaultTheme.SidebarItem[];
 
                     if (namespace === undefined) {
+                        rootSidebarItems.push({
+                            text: documentationResource.top,
+                            link: this.#pathOf(false, locale, namespace)
+                        });
+
                         namespaceSidebarItems = rootSidebarItems;
                     } else {
                         namespaceSidebarItems = [];
 
                         rootSidebarItems.push({
                             text: namespace,
+                            link: this.#pathOf(false, locale, namespace),
                             collapsed: false,
                             items: namespaceSidebarItems
                         });

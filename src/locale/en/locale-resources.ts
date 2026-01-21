@@ -1,7 +1,8 @@
 export default {
     Documentation: {
-        rootNamespace: "Root namespace",
-        namespace: "Namespace: {{namespace}}",
+        top: "Application Extension",
+        rootNamespaceTitle: "Root Namespace",
+        namespaceTitle: "Namespace: {{namespace}}",
         introduction: "Welcome to the AIDC Toolkit! Use the sidebar to explore the functions available.",
         parameters: "Parameters",
         name: "Name",

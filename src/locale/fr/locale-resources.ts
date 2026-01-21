@@ -1,7 +1,8 @@
 export default {
     Documentation: {
-        rootNamespace: "Espace de noms racine",
-        namespace: "Espace de noms: {{namespace}}",
+        top: "Extension d'application",
+        rootNamespaceTitle: "Espace de noms racine",
+        namespaceTitle: "Espace de noms: {{namespace}}",
         introduction: "Bienvenue dans la boîte à outils AIDC! Utilisez la barre latérale pour explorer les fonctions disponibles.",
         parameters: "Paramètres",
         name: "Nom",
