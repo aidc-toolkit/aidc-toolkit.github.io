@@ -3,6 +3,7 @@
 /node_modules/
 /.vitepress/cache/
 /.vitepress/dist/
+/config/*.local.json
 /site/public/
 /site/api/
 /site/app-extension/
