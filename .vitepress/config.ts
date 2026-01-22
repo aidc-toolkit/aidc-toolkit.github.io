@@ -14,6 +14,9 @@ const sitemapHostname = `${baseURL(packageConfiguration.version, await ALPHA_BAS
 // Extract base from sitemap hostname.
 const base = sitemapHostname.substring(sitemapHostname.indexOf("/", sitemapHostname.indexOf("://") + 3));
 
+// Output directory is based on base.
+const outDir = `.vitepress/dist${base}`;
+
 const demoItem: DefaultTheme.SidebarItem & DefaultTheme.NavItem = {
     text: "Demo",
     link: "/demo/",
@@ -60,6 +63,7 @@ export default withMermaid(defineConfig({
     description: "A comprehensive set of libraries for integrating Automatic Identification and Data Capture (AIDC) functionality into web-based applications",
 
     base,
+    outDir,
 
     sitemap: {
         hostname: sitemapHostname

@@ -32,6 +32,12 @@ jobs:
           ${{ toJSON(github) }}
           EOF
 
+      - name: Setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ vars.NODE_VERSION }}
+          registry-url: https://registry.npmjs.org/
+
       - name: Checkout default repository (doc)
         uses: actions/checkout@v6
         with:
@@ -43,38 +49,16 @@ jobs:
         with:
           path: doc
 
-      - name: Parse tag
-        id: parse-tag
+      - name: Save repository state
         run: |
-          # Tag includes label if this is a non-production release.
-          label=`echo ${{ github.ref_name }} | cut -d "-" -f 2 -s`
-          
-          if [[ "$label" = "" ]]
-          then
-            base="/"
-          else
-            base="/$label/${{ steps.ref-branch.outputs.branch_name }}/"
-          fi
-          
           # Create repository state file.
           mkdir -p doc/site/public
           cat > doc/site/public/repository.txt << EOF
           Date/time: `date`
-          Label: $label
           Branch name: ${{ steps.ref-branch.outputs.branch_name }}
-          Publication base: $base
           EOF
 
           cat doc/site/public/repository.txt
-          
-          echo "label=$label" >> $GITHUB_OUTPUT
-          echo "base=$base" >> $GITHUB_OUTPUT
-
-      - name: Setup node
-        uses: actions/setup-node@v6
-        with:
-          node-version: ${{ vars.NODE_VERSION }}
-          registry-url: https://registry.npmjs.org/
 
       - name: Move .github
         run: |
@@ -84,6 +68,26 @@ jobs:
       - name: Start terminal session (pre build)
         if: vars.TERMINAL_PRE_BUILD == 'true'
         uses: mxschmitt/action-tmate@v3
+
+      - name: Restore pages
+        working-directory: doc/.vitepress
+        run: |
+          mkdir -p dist
+          cd dist
+
+          set +e
+          
+          # Get consolidated pages.
+          curl -f -s https://aidc-toolkit.com/pages.zip -o pages.zip
+          
+          if [[ $? -eq 0 ]]
+          then
+            # Production build will wipe this out completely; non-production build will wipe out only its own path.
+            unzip -qq pages.zip
+          
+            # Remove pages.zip; will be recreated to include latest content.
+            rm pages.zip
+          fi
 
       - name: Build dev
         uses: ./.github/actions/build-project-doc
@@ -140,56 +144,14 @@ jobs:
           project: doc
           branch: ${{ steps.ref-branch.outputs.branch }}
 
-      - name: Start terminal session (post build)
-        if: vars.TERMINAL_POST_BUILD == 'true'
-        uses: mxschmitt/action-tmate@v3
-
-      - name: Restore production pages
-        if: steps.parse-tag.outputs.label != ''
-        working-directory: doc/.vitepress
-        run: |
-          # Move content to base directory.
-          mv dist _dist
-          mkdir -p dist${{ steps.parse-tag.outputs.base }}
-          mv _dist/* dist${{ steps.parse-tag.outputs.base }}
-          rmdir _dist
-          
-          cd dist
-          
-          escaped_base=`echo ${{ steps.parse-tag.outputs.base }} | sed -e 's/\/$//' | sed 's/\//\\\\\//g'`
-          relative_base=`echo ${{ steps.parse-tag.outputs.base }} | sed -e 's/^\///'`
-
-          # Patch generated HTML to refer to base directory.
-          find .${{ steps.parse-tag.outputs.base }} -name "*.html" -print0 | xargs -0 sed -i -e "s/https:\\/\\/aidc-toolkit.com/https:\\/\\/aidc-toolkit.com$escaped_base/g"
-
-          set +e
-          
-          # Get consolidated pages.
-          curl -f -s https://aidc-toolkit.com/pages.zip -o pages.zip
-          
-          if [[ $? -eq 0 ]]
-          then
-            # Unzip, excluding base directory if it exists.
-            unzip -qq pages.zip -x "$relative_base*"
-  
-            # Remove pages.zip; will be recreated to include latest version of base directory.
-            rm pages.zip
-          fi
-
-      - name: Remove hostname
-        working-directory: doc/.vitepress/dist
-        run: |
-          # Replace absolute URLs on aidc-toolkit.com with relative URLs.
-          find . -name "*.html" -print0 | xargs -0 sed -i -e 's/https:\/\/aidc-toolkit.com\//\//g'
-
       - name: Save pages
         working-directory: doc/.vitepress/dist
         run: |
           # Create pages.zip.
           zip -q -r pages .
 
-      - name: Start terminal session (post zip)
-        if: vars.TERMINAL_POST_ZIP == 'true'
+      - name: Start terminal session (post build)
+        if: vars.TERMINAL_POST_BUILD == 'true'
         uses: mxschmitt/action-tmate@v3
 
       - name: Configure GitHub Pages
