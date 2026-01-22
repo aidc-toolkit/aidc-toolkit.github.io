@@ -7,3 +7,4 @@
 /site/api/
 /site/app-extension/
 /site/fr/app-extension/
+/config/*.local.json

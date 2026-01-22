@@ -1,10 +1,18 @@
+import { ALPHA_BASE_URL, baseURL } from "@aidc-toolkit/core";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import { defineConfig } from "vitepress";
 import { withMermaid } from "vitepress-plugin-mermaid";
 import type { DefaultTheme } from "vitepress/theme";
+import packageConfiguration from "../package.json" with { type: "json" };
 import apiSidebar from "../site/api/typedoc-sidebar.json" with { type: "json" };
 import appExtensionSidebar from "../site/app-extension/app-extension-sidebar.json" with { type: "json" };
 import frAppExtensionSidebar from "../site/fr/app-extension/app-extension-sidebar.json" with { type: "json" };
+
+// Sitemap hostname must include trailing '/'.
+const sitemapHostname = `${baseURL(packageConfiguration.version, await ALPHA_BASE_URL)}/`;
+
+// Extract base from sitemap hostname.
+const base = sitemapHostname.substring(sitemapHostname.indexOf("/", sitemapHostname.indexOf("://") + 3));
 
 const demoItem: DefaultTheme.SidebarItem & DefaultTheme.NavItem = {
     text: "Demo",
@@ -51,12 +59,10 @@ export default withMermaid(defineConfig({
     title: "AIDC Toolkit",
     description: "A comprehensive set of libraries for integrating Automatic Identification and Data Capture (AIDC) functionality into web-based applications",
 
+    base,
+
     sitemap: {
-        hostname: "https://aidc-toolkit.com",
-        transformItems(items) {
-            // Preview path is for development and testing only.
-            return items.filter(item => !item.url.startsWith("preview/"));
-        }
+        hostname: sitemapHostname
     },
 
     srcDir: "./site",

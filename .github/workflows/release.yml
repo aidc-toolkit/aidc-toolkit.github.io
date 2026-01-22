@@ -60,8 +60,8 @@ jobs:
           mkdir -p doc/site/public
           cat > doc/site/public/repository.txt << EOF
           Date/time: `date`
-          Branch name: ${{ steps.ref-branch.outputs.branch_name }}
           Label: $label
+          Branch name: ${{ steps.ref-branch.outputs.branch_name }}
           Publication base: $base
           EOF
 
@@ -139,7 +139,6 @@ jobs:
         with:
           project: doc
           branch: ${{ steps.ref-branch.outputs.branch }}
-          build_parameters: --base ${{ steps.parse-tag.outputs.base }}
 
       - name: Start terminal session (post build)
         if: vars.TERMINAL_POST_BUILD == 'true'
