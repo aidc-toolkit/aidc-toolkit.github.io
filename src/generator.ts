@@ -8,6 +8,7 @@ import {
 import { I18nEnvironments } from "@aidc-toolkit/core";
 import fs from "node:fs";
 import type { DefaultTheme } from "vitepress/theme";
+import packageConfiguration from "../package.json" with { type: "json" };
 import { type DocLocaleResources, i18nDocInit, i18nextDoc } from "./locale/i18n.js";
 
 /**
@@ -392,7 +393,7 @@ class DocumentationGenerator extends Generator {
     }
 }
 
-const generator = new DocumentationGenerator();
+const generator = new DocumentationGenerator(packageConfiguration.version);
 
 i18nDocInit(I18nEnvironments.CLI).then(async () =>
     generator.generate()
