@@ -28,9 +28,9 @@
     "server-preview": "npm run build:doc && vitepress preview"
   },
   "devDependencies": {
-    "@aidc-toolkit/app-extension": "1.0.37-beta",
-    "@aidc-toolkit/core": "1.0.35-beta",
-    "@aidc-toolkit/dev": "1.0.34-beta",
+    "@aidc-toolkit/app-extension": "1.0.38-alpha.202601220310",
+    "@aidc-toolkit/core": "1.0.36-alpha.202601220308",
+    "@aidc-toolkit/dev": "1.0.35-alpha.202601220308",
     "mermaid": "^11.12.2",
     "typedoc": "^0.28.16",
     "typedoc-plugin-markdown": "^4.9.0",
