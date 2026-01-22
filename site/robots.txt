@@ -1,5 +1,5 @@
-# Preview path is for development and testing only.
+# Beta path is for development and testing only.
 User-agent: *
-Disallow: /preview/
+Disallow: /beta/
 
 Sitemap: https://aidc-toolkit.com/sitemap.xml
