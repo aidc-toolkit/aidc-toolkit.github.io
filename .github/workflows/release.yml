@@ -144,15 +144,15 @@ jobs:
           project: doc
           branch: ${{ steps.ref-branch.outputs.branch }}
 
+      - name: Start terminal session (post build)
+        if: vars.TERMINAL_POST_BUILD == 'true'
+        uses: mxschmitt/action-tmate@v3
+
       - name: Save pages
         working-directory: doc/.vitepress/dist
         run: |
           # Create pages.zip.
           zip -q -r pages .
-
-      - name: Start terminal session (post build)
-        if: vars.TERMINAL_POST_BUILD == 'true'
-        uses: mxschmitt/action-tmate@v3
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
