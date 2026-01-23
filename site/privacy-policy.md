@@ -1,28 +1,33 @@
+---
+outline: false
+navbar: false
+---
+
 # AIDC Toolkit Privacy Policy / Politique de confidentialité – La boîte à outils AIDC
 
 **Effective Date**: 2026 January 22
 
-Dolphin Data Development Ltd. respects your privacy. This Privacy Policy explains how information is handled when you use the AIDC Toolkit libraries and application extensions (hereafter referred to as "AIDC Toolkit").
+Dolphin Data Development Ltd. respects your privacy. This Privacy Policy explains how information is handled when you use AIDC Toolkit libraries and application extensions (hereafter referred to as "*AIDC Toolkit*").
 
 **Date d’entrée en vigueur**: 2026 janvier 22
 
-Dolphin Data Development Ltd. respecte votre vie privée. La présente politique de confidentialité explique comment les informations sont traitées lorsque vous utilisez les bibliothèques et extensions de la boîte à outils AIDC (ci-après dénommé «la boîte à outils AIDC»).
+Dolphin Data Development Ltd. respecte votre vie privée. La présente politique de confidentialité explique comment les informations sont traitées lorsque vous utilisez les bibliothèques et extensions de la boîte à outils AIDC (ci-après dénommé «*la boîte à outils AIDC*»).
 
 ## Information We Collect / Informations collectées
 
-AIDC Toolkit does not collect, store, transmit, or share any personal information or user data.
+*AIDC Toolkit* does not collect, store, transmit, or share any personal information or user data.
 
-AIDC Toolkit operates entirely locally on your device and does not require you to provide any personal information to use its features.
+*AIDC Toolkit* operates entirely locally on your device and does not require you to provide any personal information to use its features.
 
-La boîte à outils AIDC ne collecte, ne stocke, ne transmet et ne partage aucune information personnelle ni donnée utilisateur.
+*La boîte à outils AIDC* ne collecte, ne stocke, ne transmet et ne partage aucune information personnelle ni donnée utilisateur.
 
-La boîte à outils AIDC fonctionne entièrement localement sur votre appareil et ne nécessite aucune information personnelle pour utiliser ses fonctionnalités.
+*La boîte à outils AIDC* fonctionne entièrement localement sur votre appareil et ne nécessite aucune information personnelle pour utiliser ses fonctionnalités.
 
 ## Third-Party Services / Services tiers
 
-AIDC Toolkit does not use third-party services that collect user data.
+*AIDC Toolkit* does not use third-party services that collect user data.
 
-La boîte à outils AIDC n’utilise aucun service tiers qui collecte des données utilisateur.
+*La boîte à outils AIDC* n’utilise aucun service tiers qui collecte des données utilisateur.
 
 ## Data Security / Sécurité des données
 
