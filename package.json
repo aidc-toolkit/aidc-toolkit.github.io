@@ -1,6 +1,6 @@
 {
   "name": "@aidc-toolkit/doc",
-  "version": "1.0.43-beta",
+  "version": "1.0.44-alpha",
   "description": "Documentation for AIDC Toolkit",
   "type": "module",
   "private": true,
@@ -20,7 +20,7 @@
   },
   "scripts": {
     "lint": "eslint",
-    "typedoc": "typedoc && replace --silent 'https://aidc-toolkit\\.com/' '/' site/api --include index.md --recursive",
+    "typedoc": "typedoc && replace --silent 'https://aidc-toolkit\\.com/v\\d+.\\d+/api/' '../' site/api --include index.md --recursive",
     "generate-app-extension-documentation": "tsx src/generator.ts",
     "build:base": "npm run typedoc && npm run generate-app-extension-documentation && vitepress build",
     "build:alpha": "tsc --noEmit && npm run build:base",
@@ -29,9 +29,9 @@
     "server-preview": "npm run build:doc && vitepress preview"
   },
   "devDependencies": {
-    "@aidc-toolkit/app-extension": "1.0.41-beta",
-    "@aidc-toolkit/core": "1.0.38-beta",
-    "@aidc-toolkit/dev": "1.0.37-beta",
+    "@aidc-toolkit/app-extension": "1.0.42-alpha.202601241832",
+    "@aidc-toolkit/core": "1.0.39-alpha.202601241830",
+    "@aidc-toolkit/dev": "1.0.38-alpha.202601241830",
     "mermaid": "^11.12.2",
     "replace": "^1.2.2",
     "typedoc": "^0.28.16",
