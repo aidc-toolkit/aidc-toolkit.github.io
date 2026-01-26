@@ -1,10 +1,5 @@
-import {
-    type ClassDescriptor,
-    type FunctionLocalization,
-    Generator,
-    type MethodDescriptor,
-    Multiplicities
-} from "@aidc-toolkit/app-extension";
+import { type ClassDescriptor, type MethodDescriptor, Multiplicities } from "@aidc-toolkit/app-extension";
+import { type FunctionLocalization, Generator } from "@aidc-toolkit/app-extension/generator";
 import { I18nEnvironments } from "@aidc-toolkit/core";
 import fs from "node:fs";
 import type { DefaultTheme } from "vitepress/theme";
