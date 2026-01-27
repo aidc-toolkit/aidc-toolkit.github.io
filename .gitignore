@@ -1,4 +1,9 @@
 /**/.DS_Store
 /.npmrc
-/package-lock.json
 /node_modules/
+/.vitepress/cache/
+/.vitepress/dist/
+/site/api/
+/site/app-extension/
+/site/fr/app-extension/
+/config/*.local.json

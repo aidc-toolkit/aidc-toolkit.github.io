@@ -4,8 +4,14 @@ inputs:
   project:
     description: Project to be built
     required: true
+  branch:
+    description: Branch to checkout
+    required: true
   build_parameters:
     description: Additional build parameters
+    required: false
+  token:
+    description: GitHub read-only token
     required: false
 
 runs:
@@ -13,20 +19,24 @@ runs:
 
   steps:
     - name: Checkout
-      # Documentation (this) project has already been checked out and moved to the correct directory.
+      # Documentation (this) project has already been checked out to the correct directory.
       if: inputs.project != 'doc'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: aidc-toolkit/${{ inputs.project }}
-        # Get the matching reference.
-        ref: ${{ github.ref_name }}
+        ref: ${{ inputs.branch }}
         path: ${{ inputs.project }}
+        token: ${{ inputs.token }}
 
     - name: Build for documentation
       shell: bash
       working-directory: ${{ inputs.project }}
       run: |
-        npm install
+        # Replace organization dependency with link to build directory.
+        sed -i -e 's/^    "@aidc-toolkit\/\([^"]*\)": ".*"/    "@aidc-toolkit\/\1": "file:..\/\1"/' package.json
+        
+        # Install dependencies with copy rather than link to ensure that all are properly available.
+        npm install --install-links
 
         # All projects have build:doc script.
         npm run build:doc -- ${{ inputs.build_parameters }}

@@ -1,0 +1,171 @@
+name: Publish to GitHub Pages
+
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  id-token: write
+  pages: write
+
+jobs:
+  publish:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Dump vars
+        if: vars.DUMP_VARS == 'true'
+        run: |
+          cat << EOF
+          ${{ toJSON(vars) }}
+          EOF
+
+      - name: Dump GitHub context
+        if: vars.DUMP_GITHUB_CONTEXT == 'true'
+        run: |
+          cat << EOF
+          ${{ toJSON(github) }}
+          EOF
+
+      - name: Setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ vars.NODE_VERSION }}
+          registry-url: https://registry.npmjs.org/
+
+      - name: Checkout default repository (doc)
+        uses: actions/checkout@v6
+        with:
+          path: doc
+
+      - name: Reference branch
+        id: ref-branch
+        uses: aidc-toolkit/.github/actions/ref-branch@main
+        with:
+          path: doc
+
+      - name: Save repository state
+        run: |
+          # Create repository state file.
+          mkdir -p doc/site/public
+          cat > doc/site/public/repository.txt << EOF
+          Date/time: `date`
+          Branch name: ${{ steps.ref-branch.outputs.branch_name }}
+          EOF
+
+          cat doc/site/public/repository.txt
+
+      - name: Move .github
+        run: |
+          # Move .github to root to make actions accessible.
+          mv doc/.github .
+
+      - name: Start terminal session (pre build)
+        if: vars.TERMINAL_PRE_BUILD == 'true'
+        uses: mxschmitt/action-tmate@v3
+
+      - name: Restore pages
+        working-directory: doc/.vitepress
+        run: |
+          mkdir -p dist
+          cd dist
+
+          set +e
+          
+          # Get consolidated pages.
+          curl -f -s https://aidc-toolkit.com/pages.zip -o pages.zip
+          
+          if [[ $? -eq 0 ]]
+          then
+            # Production build will wipe this out completely; non-production build will wipe out only its own path.
+            unzip -qq pages.zip
+          
+            # Remove pages.zip; will be recreated to include latest content.
+            rm pages.zip
+          fi
+
+      - name: Build dev
+        uses: ./.github/actions/build-project-doc
+        with:
+          project: dev
+          branch: ${{ steps.ref-branch.outputs.branch }}
+          token: ${{ secrets.ORGANIZATION_READ_ONLY }}
+
+      - name: Build core
+        uses: ./.github/actions/build-project-doc
+        with:
+          project: core
+          branch: ${{ steps.ref-branch.outputs.branch }}
+          token: ${{ secrets.ORGANIZATION_READ_ONLY }}
+
+      - name: Build utility
+        uses: ./.github/actions/build-project-doc
+        with:
+          project: utility
+          branch: ${{ steps.ref-branch.outputs.branch }}
+          token: ${{ secrets.ORGANIZATION_READ_ONLY }}
+
+      - name: Build gs1
+        uses: ./.github/actions/build-project-doc
+        with:
+          project: gs1
+          branch: ${{ steps.ref-branch.outputs.branch }}
+          token: ${{ secrets.ORGANIZATION_READ_ONLY }}
+
+      - name: Build demo
+        uses: ./.github/actions/build-project-doc
+        with:
+          project: demo
+          branch: ${{ steps.ref-branch.outputs.branch }}
+          token: ${{ secrets.ORGANIZATION_READ_ONLY }}
+
+      - name: Build app-extension
+        uses: ./.github/actions/build-project-doc
+        with:
+          project: app-extension
+          branch: ${{ steps.ref-branch.outputs.branch }}
+          token: ${{ secrets.ORGANIZATION_READ_ONLY }}
+
+      - name: Build microsoft-add-in
+        uses: ./.github/actions/build-project-doc
+        with:
+          project: microsoft-add-in
+          branch: ${{ steps.ref-branch.outputs.branch }}
+          token: ${{ secrets.ORGANIZATION_READ_ONLY }}
+
+      - name: Build doc
+        uses: ./.github/actions/build-project-doc
+        with:
+          project: doc
+          branch: ${{ steps.ref-branch.outputs.branch }}
+
+      - name: Start terminal session (post build)
+        if: vars.TERMINAL_POST_BUILD == 'true'
+        uses: mxschmitt/action-tmate@v3
+
+      - name: Save pages
+        working-directory: doc/.vitepress/dist
+        run: |
+          # Create pages.zip.
+          zip -q -r pages .
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload pages directory
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: doc/.vitepress/dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Start terminal session (post deploy)
+        if: vars.TERMINAL_POST_DEPLOY == 'true'
+        uses: mxschmitt/action-tmate@v3

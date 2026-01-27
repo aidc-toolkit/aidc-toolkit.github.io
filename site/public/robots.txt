@@ -1,0 +1,5 @@
+# Beta path is for development and testing only.
+User-agent: *
+Disallow: /beta/
+
+Sitemap: https://aidc-toolkit.com/sitemap.xml
