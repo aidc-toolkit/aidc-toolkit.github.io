@@ -1,7 +1,7 @@
 import { type ClassDescriptor, type MethodDescriptor, Multiplicities } from "@aidc-toolkit/app-extension";
 import { type FunctionLocalization, Generator } from "@aidc-toolkit/app-extension/generator";
 import { I18nEnvironments } from "@aidc-toolkit/core";
-import fs from "node:fs";
+import * as fs from "node:fs";
 import type { DefaultTheme } from "vitepress/theme";
 import packageConfiguration from "../package.json" with { type: "json" };
 import { type DocLocaleResources, i18nDocInit, i18nextDoc } from "./locale/i18n.js";
