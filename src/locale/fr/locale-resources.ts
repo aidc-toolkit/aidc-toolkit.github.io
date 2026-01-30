@@ -9,6 +9,7 @@ export default {
         type: "Type",
         description: "Description",
         types: ["Chaîne", "Numéro", "Booléen", "N'importe quel"],
+        parametersAreOptional: "Les paramètres en *italique* sont facultatifs.",
         parameterAcceptsArray: "<sup>*</sup> Ce paramètre accepte une seule valeur ou un tableau de valeurs.",
         parameterAcceptsMatrix: "<sup>**</sup> Ce paramètre accepte une seule valeur, un tableau de valeurs, ou une matrice de valeurs.",
         functionReturnsArray: "Cette fonction renvoie un tableau de valeurs.",
