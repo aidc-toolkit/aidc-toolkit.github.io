@@ -221,13 +221,13 @@ class DocumentationGenerator extends Generator {
     /**
      * @inheritDoc
      */
-    protected override createProxyObject(): void {
+    protected override createClassProxy(): void {
     }
 
     /**
      * @inheritDoc
      */
-    protected override createProxyFunction(classDescriptor: ClassDescriptor, methodDescriptor: MethodDescriptor, functionLocalizationsMap: ReadonlyMap<string, FunctionLocalization>): void {
+    protected override createMethodProxy(classDescriptor: ClassDescriptor, methodDescriptor: MethodDescriptor, functionLocalizationsMap: ReadonlyMap<string, FunctionLocalization>): void {
         // Hidden methods are not documented.
         if (methodDescriptor.isHidden !== true) {
             const namespace = classDescriptor.namespace;
