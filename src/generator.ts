@@ -1,6 +1,6 @@
 import { type ClassDescriptor, type MethodDescriptor, Multiplicities } from "@aidc-toolkit/app-extension";
 import { type FunctionLocalization, Generator } from "@aidc-toolkit/app-extension/generator";
-import { I18nEnvironments } from "@aidc-toolkit/core";
+import { I18nLanguageDetectors } from "@aidc-toolkit/core";
 import * as fs from "node:fs";
 import type { DefaultTheme } from "vitepress/theme";
 import packageConfiguration from "../package.json" with { type: "json" };
@@ -451,7 +451,7 @@ class DocumentationGenerator extends Generator {
 
 const generator = new DocumentationGenerator(packageConfiguration.version);
 
-i18nDocInit(I18nEnvironments.CLI).then(async () =>
+i18nDocInit(I18nLanguageDetectors.CLI).then(async () =>
     generator.generate()
 ).catch((e: unknown) => {
     generator.logger.error(e);
