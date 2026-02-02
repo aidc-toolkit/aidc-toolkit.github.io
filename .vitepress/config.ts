@@ -151,7 +151,15 @@ export default withMermaid(defineConfig({
                 text: "API",
                 link: `${productionPath}/api/`
             },
-            demoItem
+            demoItem,
+            {
+                text: "Privacy Policy",
+                link: "privacy-policy.md"
+            },
+            {
+                text: "Terms and Conditions",
+                link: "terms-and-conditions.md"
+            }
         ],
 
         sidebar: Object.fromEntries([

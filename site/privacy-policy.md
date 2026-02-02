@@ -1,6 +1,5 @@
 ---
 outline: false
-navbar: false
 ---
 
 # AIDC Toolkit Privacy Policy / Politique de confidentialité – La boîte à outils AIDC

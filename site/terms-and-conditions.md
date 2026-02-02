@@ -1,6 +1,5 @@
 ---
 outline: false
-navbar: false
 ---
 
 # AIDC Toolkit Terms and Conditions / Conditions d’utilisation – La boîte à outils AIDC
