@@ -11,7 +11,7 @@ Dolphin Data Development Ltd. respects your privacy. This Privacy Policy explain
 
 **Date d’entrée en vigueur**: 2026 janvier 22
 
-Dolphin Data Development Ltd. respecte votre vie privée. La présente politique de confidentialité explique comment les informations sont traitées lorsque vous utilisez les bibliothèques et extensions de la boîte à outils AIDC (ci-après dénommé «*la boîte à outils AIDC*»).
+Dolphin Data Development Ltd. respecte votre vie privée. La présente politique de confidentialité explique comment les informations sont traitées lorsque vous utilisez les bibliothèques et extensions de la boîte à outils AIDC (ci-après dénommé « *la boîte à outils AIDC* »).
 
 ## Information We Collect / Informations collectées
 

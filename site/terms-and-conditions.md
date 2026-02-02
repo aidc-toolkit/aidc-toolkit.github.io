@@ -11,7 +11,7 @@ By downloading, installing, or using the *AIDC Toolkit* application (“the Soft
 
 **Date d’entrée en vigueur**: 2026 janvier 22
 
-En téléchargeant, installant ou utilisant l’application *La boîte à outils AIDC* («le Logiciel»), vous acceptez les présentes conditions d’utilisation. Si vous n’êtes pas d’accord avec ces conditions, veuillez ne pas utiliser le Logiciel.
+En téléchargeant, installant ou utilisant l’application *La boîte à outils AIDC* (« le Logiciel »), vous acceptez les présentes conditions d’utilisation. Si vous n’êtes pas d’accord avec ces conditions, veuillez ne pas utiliser le Logiciel.
 
 ## Licence / Licence
 
@@ -27,7 +27,7 @@ To the fullest extent permitted by law, the developer **disclaims all warranties
 
 The developer does not guarantee that the Software will be error-free, uninterrupted, or suitable for your specific needs.
 
-Le Logiciel est fourni «**tel quel**» et «**selon disponibilité**», sans aucune garantie, quelle qu’elle soit.
+Le Logiciel est fourni «**tel quel**» et « **selon disponibilité** », sans aucune garantie, quelle qu’elle soit.
 
 Dans toute la mesure permise par la loi, le développeur **décline toute garantie**, expresse, implicite ou légale, y compris, sans s’y limiter, les garanties implicites de qualité marchande, d’adéquation à un usage particulier, d’exactitude, de fiabilité ou d’absence de contrefaçon.
 
