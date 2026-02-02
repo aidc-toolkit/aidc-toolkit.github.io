@@ -147,6 +147,13 @@ class DocumentationGenerator extends Generator {
     }
 
     /**
+     * Constructor.
+     */
+    constructor() {
+        super(packageConfiguration.version);
+    }
+
+    /**
      * @inheritDoc
      */
     protected override initialize(): void {
@@ -449,7 +456,7 @@ class DocumentationGenerator extends Generator {
     }
 }
 
-const generator = new DocumentationGenerator(packageConfiguration.version);
+const generator = new DocumentationGenerator();
 
 i18nDocInit(I18nLanguageDetectors.CLI).then(async () =>
     generator.generate()
