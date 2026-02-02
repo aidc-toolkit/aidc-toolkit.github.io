@@ -9,6 +9,7 @@ export default {
         type: "Type",
         description: "Description",
         types: ["String", "Number", "Boolean", "Any"],
+        parametersAreOptional: "Parameters in *italics* are optional.",
         parameterAcceptsArray: "<sup>*</sup> This parameter accepts a single value or an array of values.",
         parameterAcceptsMatrix: "<sup>**</sup> This parameter accepts a single value, an array of values, or a matrix of values.",
         functionReturnsArray: "This function returns an array of values.",

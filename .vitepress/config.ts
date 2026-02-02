@@ -3,12 +3,12 @@ import { viteStaticCopy } from "vite-plugin-static-copy";
 import { defineConfig } from "vitepress";
 import { withMermaid } from "vitepress-plugin-mermaid";
 import type { DefaultTheme } from "vitepress/theme";
-import packageConfiguration from "../package.json" with { type: "json" };
 import apiSidebar from "../site/api/typedoc-sidebar.json" with { type: "json" };
 import appExtensionSidebar from "../site/app-extension/app-extension-sidebar.json" with { type: "json" };
 import frAppExtensionSidebar from "../site/fr/app-extension/app-extension-sidebar.json" with { type: "json" };
+import { VERSION } from "../src/version.js";
 
-const parsedVersion = parseVersion(packageConfiguration.version);
+const parsedVersion = parseVersion(VERSION);
 const productionPath = parsedVersion.preReleaseIdentifier === undefined ? `/v${parsedVersion.majorVersion}.${parsedVersion.minorVersion}` : "";
 
 /**
@@ -59,7 +59,7 @@ function rewriteSidebar<TSidebar extends DefaultTheme.Sidebar>(sidebar: TSidebar
 }
 
 // Sitemap hostname must include trailing '/'.
-const sitemapHostname = `${websiteURL(packageConfiguration.version, false, await ALPHA_URL)}/`;
+const sitemapHostname = `${websiteURL(VERSION, false, await ALPHA_URL)}/`;
 
 // Extract base from sitemap hostname.
 const base = sitemapHostname.substring(sitemapHostname.indexOf("/", sitemapHostname.indexOf("://") + 3));

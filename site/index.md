@@ -26,16 +26,15 @@ Kevin can be reached [by email](mailto:Kevin.Dean@datadevelopment.com) or [via L
 
 ## Roadmap
 
-| Release | Date   | Features                                                                                                     |
-|---------|--------|--------------------------------------------------------------------------------------------------------------| 
-| 1.0.0   | 2025Q4 | * Utility library<br>* GS1 library<br>* Full-featured demo application<br>* English and French localization  |
-| 1.1.0   | 2026Q1 | * Microsoft Excel add-in integration<br>* Google Sheets add-on integration                                   |
-| 1.2.0   | 2026Q1 | * GS1 element string generation and parsing<br>* GS1 Digital Link generation and parsing                     |
-| 2.0.0   | 2026Q2 | Top secret (but it's going to be big)                                                                        |
+| Release | Date   | Features                                                                                                                                                                                  |
+|---------|--------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| 1.0     | 2026Q1 | * Utility library<br>* GS1 library<br>* Full-featured demo application<br>* English and French localization<br>* Microsoft Excel add-in integration<br>* Google Sheets add-on integration |
+| 1.1     | 2026Q1 | * GS1 element string generation and parsing<br>* GS1 Digital Link generation and parsing<br>* EPC generation and parsing                                                                  |
+| 2.0     | 2026Q2 | Top secret (but it's going to be big)                                                                                                                                                     |
 
 ## Packages
 
-The AIDC Toolkit is broken up into a number of packages, each of which builds on the ones that come before. It's not necessary to have a full understanding of all packages in order to use develop code using the AIDC Toolkit, and where critical "must know" information is presented, it's called out.
+The AIDC Toolkit is broken up into a number of packages, each of which builds on the ones that come before. It's not necessary to have a full understanding of all packages to develop code using the AIDC Toolkit, and where critical "must know" information is presented, it's called out.
 
 ### [dev](https://github.com/aidc-toolkit/dev)
 
@@ -43,7 +42,9 @@ Shared development artefacts. If you're not developing or maintaining the AIDC T
 
 ### [core](api/Core/)
 
-Core functionality. Specifically, this package is responsible for internationalization and simplifies the use of [i18next](https://www.i18next.com) across multiple packages and applications. Applications that don't use internationalization or that have their own internationalization framework may ignore this package, but are still required to initialize internationalization via the packages they use.
+Core functionality. This package is responsible for internationalization and simplifies the use of [i18next](https://www.i18next.com) across multiple packages and applications. Applications that don't use internationalization or that have their own internationalization framework may ignore this package, but are still required to initialize internationalization via the packages they use.
+
+This package also provides some basic types and helper functions that are used throughout the AIDC Toolkit.
 
 ### [utility](api/Utility/)
 

@@ -1,10 +1,10 @@
 import { type ClassDescriptor, type MethodDescriptor, Multiplicities } from "@aidc-toolkit/app-extension";
 import { type FunctionLocalization, Generator } from "@aidc-toolkit/app-extension/generator";
-import { I18nEnvironments } from "@aidc-toolkit/core";
+import { I18nLanguageDetectors } from "@aidc-toolkit/core";
 import * as fs from "node:fs";
 import type { DefaultTheme } from "vitepress/theme";
-import packageConfiguration from "../package.json" with { type: "json" };
 import { type DocLocaleResources, i18nDocInit, i18nextDoc } from "./locale/i18n.js";
+import { VERSION } from "./version.js";
 
 /**
  * Function node.
@@ -134,6 +134,26 @@ class DocumentationGenerator extends Generator {
     }
 
     /**
+     * Write documentation to a file.
+     *
+     * @param path
+     * Path.
+     *
+     * @param lines
+     * Lines of documentation.
+     */
+    static #writeDocumentation(path: string, lines: string[]): void {
+        fs.writeFileSync(path, `${lines.join("\n")}\n`);
+    }
+
+    /**
+     * Constructor.
+     */
+    constructor() {
+        super(VERSION);
+    }
+
+    /**
      * @inheritDoc
      */
     protected override initialize(): void {
@@ -173,25 +193,23 @@ class DocumentationGenerator extends Generator {
         this.#namespaceNodes.push(this.#currentNamespaceNode);
 
         // Create locale namespace directories.
-        for (const locale of this.locales) {
-            const lngOption = {
-                lng: locale
-            } as const;
+        for (const documentationResource of this.#documentationResources) {
+            const locale = documentationResource.locale;
 
             fs.mkdirSync(this.#pathOf(true, locale, namespace), {
                 recursive: true
             });
 
-            const f = fs.createWriteStream(this.#pathOf(true, locale, namespace, "index.md"));
-
-            f.write("---\noutline: false\nnavbar: false\n---\n\n");
-
-            f.write(`# ${i18nextDoc.t(namespace === undefined ? "Documentation.rootNamespaceTitle" : "Documentation.namespaceTitle", {
-                ...lngOption,
-                namespace
-            })}\n\n`);
-
-            f.write(`${i18nextDoc.t("Documentation.introduction", lngOption)}\n`);
+            DocumentationGenerator.#writeDocumentation(this.#pathOf(true, locale, namespace, "index.md"), [
+                "---",
+                "outline: false",
+                "navbar: false",
+                "---",
+                "",
+                `# ${namespace === undefined ? documentationResource.rootNamespaceTitle : documentationResource.namespaceTitle.replaceAll("{{namespace}}", namespace)}`,
+                "",
+                documentationResource.introduction
+            ]);
         }
     }
 
@@ -210,13 +228,13 @@ class DocumentationGenerator extends Generator {
     /**
      * @inheritDoc
      */
-    protected override createProxyObject(): void {
+    protected override createClassProxy(): void {
     }
 
     /**
      * @inheritDoc
      */
-    protected override createProxyFunction(classDescriptor: ClassDescriptor, methodDescriptor: MethodDescriptor, functionLocalizationsMap: ReadonlyMap<string, FunctionLocalization>): void {
+    protected override createMethodProxy(classDescriptor: ClassDescriptor, methodDescriptor: MethodDescriptor, functionLocalizationsMap: ReadonlyMap<string, FunctionLocalization>): void {
         // Hidden methods are not documented.
         if (methodDescriptor.isHidden !== true) {
             const namespace = classDescriptor.namespace;
@@ -225,31 +243,55 @@ class DocumentationGenerator extends Generator {
                 functionLocalizationsMap
             });
 
+            let googleSheetsFunctionName: string | undefined = undefined;
+
             // Localize functions documentation.
             for (const documentationResource of this.#documentationResources) {
                 const locale = documentationResource.locale;
 
-                const lngOption = {
-                    lng: locale
-                } as const;
-
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- Guaranteed by Generator class.
                 const functionLocalization = functionLocalizationsMap.get(locale)!;
 
-                const f = fs.createWriteStream(this.#pathOf(true, locale, namespace, `${functionLocalization.name}.md`));
+                // Google Sheets doesn't support localization so work with the default (first) locale only.
+                googleSheetsFunctionName ??= `Google Sheets: aidct${namespace ?? ""}${functionLocalization.titleCaseName}`;
 
-                f.write("---\noutline: false\nnavbar: false\n---\n\n");
+                const callParameters = `(${methodDescriptor.parameterDescriptors.map((parameterDescriptor) => {
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- Guaranteed by Generator class.
+                    const parameterName = functionLocalization.parametersMap.get(parameterDescriptor.name)!.name;
 
-                f.write(`# ${namespace === undefined ? "" : `${namespace}.`}${functionLocalization.name}\n\n`);
+                    return parameterDescriptor.isRequired ? parameterName : `*${parameterName}*`;
+                }).join(", ")})`;
 
-                f.write(`${functionLocalization.description}\n`);
+                const functionLines = [
+                    "---",
+                    "outline: false",
+                    "navbar: false",
+                    "---",
+                    "",
+                    `# ${functionLocalization.name}`,
+                    "",
+                    "::: info Implementations",
+                    `Microsoft Excel: AIDCT.${namespace === undefined ? "" : `${namespace}.`}${functionLocalization.name}${callParameters}`,
+                    "",
+                    `Google Sheets: ${googleSheetsFunctionName}${callParameters}`,
+                    ":::",
+                    "",
+                    functionLocalization.description
+                ];
 
+                const functionReturnsIndex = functionLines.length;
+
+                let anyOptional = false;
                 let anyArrayParameter = false;
                 let anyMatrixParameter = false;
                 let drivingParameterName: string | undefined = undefined;
 
                 if (methodDescriptor.parameterDescriptors.length !== 0) {
-                    f.write(`\n## ${documentationResource.parameters}\n\n`);
+                    functionLines.push(
+                        "",
+                        `## ${documentationResource.parameters}`,
+                        ""
+                    );
 
                     const parametersDocumentation: ParameterDocumentation[] = methodDescriptor.parameterDescriptors.map((parameterDescriptor) => {
                         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- Guaranteed by Generator class.
@@ -279,8 +321,12 @@ class DocumentationGenerator extends Generator {
                             }
                         }
 
+                        anyOptional ||= !parameterDescriptor.isRequired;
+
+                        const nameMarkup = parameterDescriptor.isRequired ? "" : "*";
+
                         return {
-                            name: `${parameterName}${parameterNameSuffix}`,
+                            name: `${nameMarkup}${parameterName}${nameMarkup}${parameterNameSuffix}`,
                             description: parameterLocalization.description,
                             type: documentationResource.types[parameterDescriptor.type]
                         };
@@ -290,40 +336,62 @@ class DocumentationGenerator extends Generator {
                     const maximumTypeLength = Math.max(documentationResource.type.length, ...parametersDocumentation.map(parameterDocumentation => parameterDocumentation.type.length));
                     const maximumDescriptionLength = Math.max(documentationResource.description.length, ...parametersDocumentation.map(parameterDocumentation => parameterDocumentation.description.length));
 
-                    f.write(`| ${documentationResource.name.padEnd(maximumNameLength)} | ${documentationResource.type.padEnd(maximumTypeLength)} | ${documentationResource.description.padEnd(maximumDescriptionLength)} |\n`);
-                    f.write(`|-${"".padEnd(maximumNameLength, "-")}-|-${"".padEnd(maximumTypeLength, "-")}-|-${"".padEnd(maximumDescriptionLength, "-")}-|\n`);
+                    functionLines.push(
+                        `| ${documentationResource.name.padEnd(maximumNameLength)} | ${documentationResource.type.padEnd(maximumTypeLength)} | ${documentationResource.description.padEnd(maximumDescriptionLength)} |`,
+                        `|-${"".padEnd(maximumNameLength, "-")}-|-${"".padEnd(maximumTypeLength, "-")}-|-${"".padEnd(maximumDescriptionLength, "-")}-|`
+                    );
 
                     for (const parameterDocumentation of parametersDocumentation) {
-                        f.write(`| ${parameterDocumentation.name.padEnd(maximumNameLength)} | ${parameterDocumentation.type.padEnd(maximumTypeLength)} | ${parameterDocumentation.description.padEnd(maximumDescriptionLength)} |\n`);
+                        functionLines.push(`| ${parameterDocumentation.name.padEnd(maximumNameLength)} | ${parameterDocumentation.type.padEnd(maximumTypeLength)} | ${parameterDocumentation.description.padEnd(maximumDescriptionLength)} |`);
+                    }
+
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
+                    if (anyOptional) {
+                        functionLines.push(
+                            "",
+                            documentationResource.parametersAreOptional
+                        );
                     }
 
                     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
                     if (anyArrayParameter) {
-                        f.write(`\n${i18nextDoc.t("Documentation.parameterAcceptsArray", lngOption)}\n`);
+                        functionLines.push(
+                            "",
+                            documentationResource.parameterAcceptsArray
+                        );
                     }
 
                     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
                     if (anyMatrixParameter) {
-                        f.write(`\n${i18nextDoc.t("Documentation.parameterAcceptsMatrix", lngOption)}\n`);
+                        functionLines.push(
+                            "",
+                            documentationResource.parameterAcceptsMatrix
+                        );
                     }
 
+                    let functionReturns: string | undefined = undefined;
+
                     if (methodDescriptor.multiplicity === Multiplicities.Array) {
-                        f.write(`\n${i18nextDoc.t("Documentation.functionReturnsArray", lngOption)}\n`);
+                        functionReturns = documentationResource.functionReturnsArray;
                     } else if (methodDescriptor.multiplicity === Multiplicities.Matrix) {
                         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
                         if (drivingParameterName === undefined) {
-                            f.write(`\n${i18nextDoc.t("Documentation.functionReturnsMatrix", lngOption)}\n`);
+                            functionReturns = documentationResource.functionReturnsMatrix;
                         } else {
                             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
-                            f.write(`\n${i18nextDoc.t(!anyMatrixParameter ? "Documentation.functionReturnsArrayMatrix" : "Documentation.functionReturnsMatrixMatrix", {
-                                ...lngOption,
-                                drivingParameterName
-                            })}\n`);
+                            functionReturns = (!anyMatrixParameter ? documentationResource.functionReturnsArrayMatrix : documentationResource.functionReturnsMatrixMatrix).replaceAll("{{drivingParameterName}}", drivingParameterName);
                         }
+                    }
+
+                    if (functionReturns !== undefined) {
+                        functionLines.splice(functionReturnsIndex, 0, "",
+                            "",
+                            functionReturns
+                        );
                     }
                 }
 
-                f.end();
+                DocumentationGenerator.#writeDocumentation(this.#pathOf(true, locale, namespace, `${functionLocalization.name}.md`), functionLines);
             }
         }
     }
@@ -388,9 +456,9 @@ class DocumentationGenerator extends Generator {
     }
 }
 
-const generator = new DocumentationGenerator(packageConfiguration.version);
+const generator = new DocumentationGenerator();
 
-i18nDocInit(I18nEnvironments.CLI).then(async () =>
+i18nDocInit(I18nLanguageDetectors.CLI).then(async () =>
     generator.generate()
 ).catch((e: unknown) => {
     generator.logger.error(e);
