@@ -1,6 +1,6 @@
 {
   "name": "@aidc-toolkit/doc",
-  "version": "1.0.52",
+  "version": "1.0.53-alpha",
   "description": "Documentation for AIDC Toolkit",
   "type": "module",
   "private": true,
@@ -29,9 +29,9 @@
     "server-preview": "npm run build:doc && vitepress preview"
   },
   "devDependencies": {
-    "@aidc-toolkit/app-extension": "^1.0.49",
-    "@aidc-toolkit/core": "^1.0.44",
-    "@aidc-toolkit/dev": "^1.0.43",
+    "@aidc-toolkit/app-extension": "1.0.50-alpha.202602061746",
+    "@aidc-toolkit/core": "1.0.45-alpha.202602061743",
+    "@aidc-toolkit/dev": "1.0.44-alpha.202602061742",
     "mermaid": "^11.12.2",
     "replace": "^1.2.2",
     "typedoc": "^0.28.16",
