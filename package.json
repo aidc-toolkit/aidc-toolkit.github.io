@@ -1,16 +1,16 @@
 {
   "name": "@aidc-toolkit/doc",
-  "version": "1.0.55",
+  "version": "1.0.56",
   "description": "Documentation for AIDC Toolkit",
   "type": "module",
   "private": true,
   "homepage": "https://aidc-toolkit.com",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aidc-toolkit/doc.git"
+    "url": "git+https://github.com/aidc-toolkit/aidc-toolkit.github.io.git"
   },
   "bugs": {
-    "url": "https://github.com/aidc-toolkit/doc/issues"
+    "url": "https://github.com/aidc-toolkit/aidc-toolkit.github.io/issues"
   },
   "license": "Apache-2.0",
   "author": {
