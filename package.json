@@ -1,16 +1,16 @@
 {
   "name": "@aidc-toolkit/doc",
-  "version": "1.0.55",
+  "version": "1.0.57-beta",
   "description": "Documentation for AIDC Toolkit",
   "type": "module",
   "private": true,
   "homepage": "https://aidc-toolkit.com",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aidc-toolkit/doc.git"
+    "url": "git+https://github.com/aidc-toolkit/aidc-toolkit.github.io.git"
   },
   "bugs": {
-    "url": "https://github.com/aidc-toolkit/doc/issues"
+    "url": "https://github.com/aidc-toolkit/aidc-toolkit.github.io/issues"
   },
   "license": "Apache-2.0",
   "author": {
@@ -29,9 +29,9 @@
     "server-preview": "npm run build:doc && vitepress preview"
   },
   "devDependencies": {
-    "@aidc-toolkit/app-extension": "^1.0.52",
-    "@aidc-toolkit/core": "^1.0.46",
-    "@aidc-toolkit/dev": "^1.0.45",
+    "@aidc-toolkit/app-extension": "1.0.53-beta",
+    "@aidc-toolkit/core": "1.0.47-beta",
+    "@aidc-toolkit/dev": "1.0.46-beta",
     "mermaid": "^11.12.2",
     "replace": "^1.2.2",
     "typedoc": "^0.28.16",
