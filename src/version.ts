@@ -1,4 +1,4 @@
 /**
  * Repository version, updated automatically during publication.
  */
-export const VERSION = "1.0.59-alpha";
+export const VERSION = "1.0.59-beta";
