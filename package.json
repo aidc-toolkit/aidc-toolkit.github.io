@@ -1,39 +1,47 @@
 {
-  "name": "@aidc-toolkit/google-add-on",
-  "version": "1.1.0",
-  "description": "Google add-on for AIDC Toolkit",
+  "name": "@aidc-toolkit/doc",
+  "version": "1.1.1-alpha",
+  "description": "Documentation for AIDC Toolkit",
   "type": "module",
   "private": true,
   "homepage": "https://aidc-toolkit.com",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aidc-toolkit/google-add-on.git"
+    "url": "git+https://github.com/aidc-toolkit/aidc-toolkit.github.io.git"
   },
   "bugs": {
-    "url": "https://github.com/aidc-toolkit/google-add-on/issues"
+    "url": "https://github.com/aidc-toolkit/aidc-toolkit.github.io/issues"
   },
+  "license": "Apache-2.0",
   "author": {
     "name": "Kevin Dean",
     "email": "Kevin.Dean@datadevelopment.com",
     "url": "https://www.linkedin.com/in/kdean"
   },
   "scripts": {
-    "generate-source": "tsc --project tsconfig-src-generator.json --noEmit && tsx src/generator/generator.ts",
     "lint": "eslint",
-    "build:base": "tsc --project tsconfig-src.json --noEmit && clasp push",
-    "build:alpha": "npm run build:base && tsc --project tsconfig-config.json --noEmit",
-    "build:beta": "npm run generate-source && npm run build:base",
-    "build:prod": "npm run build:beta"
+    "typedoc": "typedoc && replace --silent 'https://aidc-toolkit\\.com/v\\d+.\\d+/api/' '../' site/api --include index.md --recursive",
+    "generate-app-extension-documentation": "tsx src/generator.ts",
+    "build:base": "npm run typedoc && npm run generate-app-extension-documentation && vitepress build",
+    "build:alpha": "tsc --noEmit && tsc --project tsconfig-config.json --noEmit && npm run build:base",
+    "build:doc": "npm run build:base",
+    "server": "vitepress dev --host",
+    "server-preview": "npm run build:doc && vitepress preview"
   },
   "devDependencies": {
-    "@aidc-toolkit/dev": "^1.0.47",
-    "@google/clasp": "^3.3.0",
-    "@types/google-apps-script": "^2.0.11",
-    "esbuild": "^0.28.0",
-    "esbuild-plugin-polyfill-node": "^0.3.0"
-  },
-  "dependencies": {
     "@aidc-toolkit/app-extension": "^1.1.1-alpha",
-    "@aidc-toolkit/core": "^1.0.48"
+    "@aidc-toolkit/core": "^1.0.48",
+    "@aidc-toolkit/dev": "^1.0.47",
+    "mermaid": "^11.15.0",
+    "replace": "^1.2.2",
+    "typedoc": "^0.28.19",
+    "typedoc-plugin-markdown": "^4.12.0",
+    "typedoc-plugin-mdn-links": "^5.1.1",
+    "typedoc-vitepress-theme": "^1.1.3",
+    "typescript": "<6.0.0",
+    "vite": "<6.0.0",
+    "vite-plugin-static-copy": "^3.4.0",
+    "vitepress": "^1.6.4",
+    "vitepress-plugin-mermaid": "^2.0.17"
   }
 }
