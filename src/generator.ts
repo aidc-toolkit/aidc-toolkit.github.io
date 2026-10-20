@@ -461,6 +461,6 @@ const generator = new DocumentationGenerator();
 i18nDocInit(I18nLanguageDetectors.CLI).then(async () =>
     generator.generate()
 ).catch((e: unknown) => {
-    generator.logger.error(e);
+    generator.logger.error("Generator failed", e);
     process.exit(1);
 });
