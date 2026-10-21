@@ -23,7 +23,7 @@
     "typedoc": "typedoc && replace --silent 'https://aidc-toolkit\\.com/v\\d+.\\d+/api/' '../' site/api --include index.md --recursive",
     "generate-app-extension-documentation": "tsx src/generator.ts",
     "build:base": "npm run typedoc && npm run generate-app-extension-documentation && vitepress build",
-    "build:alpha": "tsc --noEmit && tsc --project tsconfig-config.json --noEmit && npm run build:base",
+    "build:alpha": "tsc --project tsconfig-src.json --noEmit && tsc --project tsconfig-config.json --noEmit && npm run build:base",
     "build:doc": "npm run build:base",
     "server": "vitepress dev --host",
     "server-preview": "npm run build:doc && vitepress preview"
