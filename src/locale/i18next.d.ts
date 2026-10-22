@@ -10,7 +10,6 @@ declare module "i18next" {
      * Custom type options for this package.
      */
     interface CustomTypeOptions {
-        defaultNS: "aidct_doc";
         resources: {
             aidct_core: CoreLocaleResources;
             aidct_app_extension: AppExtensionLocaleResources;

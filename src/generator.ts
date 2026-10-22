@@ -3,7 +3,7 @@ import { type FunctionLocalization, Generator } from "@aidc-toolkit/app-extensio
 import { I18nLanguageDetectors } from "@aidc-toolkit/core";
 import * as fs from "node:fs";
 import type { DefaultTheme } from "vitepress/theme";
-import { type DocLocaleResources, i18nDocInit, i18nextDoc } from "./locale/i18n.js";
+import { type DocLocaleResources, i18nDocInit, i18nextDocT } from "./locale/i18n.js";
 import { VERSION } from "./version.js";
 
 /**
@@ -160,7 +160,7 @@ class DocumentationGenerator extends Generator {
         for (const locale of this.locales) {
             this.#documentationResources.push({
                 locale,
-                ...i18nextDoc.t("Documentation", {
+                ...i18nextDocT("Documentation", {
                     lng: locale,
                     returnObjects: true
                 })
