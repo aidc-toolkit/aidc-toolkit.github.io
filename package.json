@@ -25,7 +25,6 @@
     "build:base": "npm run typedoc && npm run generate-app-extension-documentation && vitepress build",
     "build:alpha": "tsc --project tsconfig-src.json --noEmit && tsc --project tsconfig-config.json --noEmit && npm run build:base",
     "build:doc": "npm run build:base",
-    "server": "vitepress dev --host",
     "server-preview": "npm run build:doc && vitepress preview"
   },
   "devDependencies": {
