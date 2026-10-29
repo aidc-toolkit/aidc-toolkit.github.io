@@ -1,4 +1,6 @@
 name: Build project for documentation
+description: Builds a dependency project as part of the documentation release workflow. Checks out the project, replaces 
+  organization dependencies with links to the build directory, and runs the build:doc script.
 
 inputs:
   project:
@@ -21,7 +23,7 @@ runs:
     - name: Checkout
       # Documentation (this) project has already been checked out to the correct directory.
       if: inputs.project != 'doc'
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       with:
         repository: aidc-toolkit/${{ inputs.project }}
         ref: ${{ inputs.branch }}
