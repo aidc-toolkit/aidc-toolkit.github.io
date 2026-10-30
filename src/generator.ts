@@ -243,7 +243,7 @@ class DocumentationGenerator extends Generator {
                 functionLocalizationsMap
             });
 
-            let googleSheetsFunctionName: string | undefined = undefined;
+            let googleSheetsFunctionName;
 
             // Localize functions documentation.
             for (const documentationResource of this.#documentationResources) {
@@ -284,7 +284,7 @@ class DocumentationGenerator extends Generator {
                 let anyOptional = false;
                 let anyArrayParameter = false;
                 let anyMatrixParameter = false;
-                let drivingParameterName: string | undefined = undefined;
+                let drivingParameterName: string | undefined;
 
                 if (methodDescriptor.parameterDescriptors.length !== 0) {
                     functionLines.push(
@@ -369,12 +369,11 @@ class DocumentationGenerator extends Generator {
                         );
                     }
 
-                    let functionReturns: string | undefined = undefined;
+                    let functionReturns;
 
                     if (methodDescriptor.multiplicity === Multiplicities.Array) {
                         functionReturns = documentationResource.functionReturnsArray;
                     } else if (methodDescriptor.multiplicity === Multiplicities.Matrix) {
-                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
                         if (drivingParameterName === undefined) {
                             functionReturns = documentationResource.functionReturnsMatrix;
                         } else {
