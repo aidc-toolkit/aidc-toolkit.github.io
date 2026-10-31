@@ -1,9 +1,7 @@
-import type { CoreLocaleResources } from "@aidc-toolkit/core";
-import type { AppExtensionLocaleResources } from "@aidc-toolkit/app-extension";
-import type { DocLocaleResources } from "./i18n.js";
+import type { I18nLocaleResources } from "@aidc-toolkit/core";
 
 /**
- * Internationalization module.
+ * Internationalization module augmentation.
  */
 declare module "i18next" {
     /**
@@ -13,21 +11,6 @@ declare module "i18next" {
         /**
          * Resources override.
          */
-        resources: {
-            /**
-             * Core locale resources.
-             */
-            aidct_core: CoreLocaleResources;
-
-            /**
-             * Application extension locale resources.
-             */
-            aidct_app_extension: AppExtensionLocaleResources;
-
-            /**
-             * Documentation locale resources.
-             */
-            aidct_doc: DocLocaleResources;
-        };
+        resources: I18nLocaleResources;
     }
 }
