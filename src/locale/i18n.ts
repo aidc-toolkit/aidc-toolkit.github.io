@@ -10,24 +10,39 @@ import frLocaleResources from "./fr/locale-resources.js";
 export const docNS = "aidct_doc";
 
 /**
- * Documentation parse keys.
- */
-export type DocParseKeys = ParseKeys<typeof docNS>;
-
-/**
  * Locale resources type is extracted from the English locale resources object.
  */
 export type DocLocaleResources = typeof enLocaleResources;
+
+/**
+ * Core locale resources augmentation.
+ */
+declare module "@aidc-toolkit/core" {
+    /**
+     * Internationalization locale resources.
+     */
+    export interface I18nLocaleResources {
+        /**
+         * Documentation locale resources.
+         */
+        [docNS]: DocLocaleResources;
+    }
+}
+
+/**
+ * Documentation parse keys.
+ */
+export type DocParseKeys = ParseKeys<typeof docNS>;
 
 /**
  * Documentation resource bundle.
  */
 export const docResourceBundle: Resource = {
     en: {
-        aidct_doc: enLocaleResources
+        [docNS]: enLocaleResources
     },
     fr: {
-        aidct_doc: frLocaleResources
+        [docNS]: frLocaleResources
     }
 };
 
