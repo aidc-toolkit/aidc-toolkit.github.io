@@ -1,4 +1,4 @@
-import { alphaURL, parseVersion, websiteURL } from "@aidc-toolkit/core";
+import { ALPHA_URL, parseVersion, websiteURL } from "@aidc-toolkit/core";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import { defineConfig } from "vitepress";
 import { withMermaid } from "vitepress-plugin-mermaid";
@@ -59,7 +59,7 @@ function rewriteSidebar<TSidebar extends DefaultTheme.Sidebar>(sidebar: TSidebar
 }
 
 // Sitemap hostname must include trailing '/'.
-const sitemapHostname = `${websiteURL(VERSION, false, await alphaURL())}/`;
+const sitemapHostname = `${websiteURL(VERSION, false, await ALPHA_URL)}/`;
 
 // Extract base from sitemap hostname.
 const base = sitemapHostname.substring(sitemapHostname.indexOf("/", sitemapHostname.indexOf("://") + 3));

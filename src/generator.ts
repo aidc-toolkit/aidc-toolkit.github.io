@@ -4,7 +4,7 @@ import { i18nCoreCLILanguageDetector } from "@aidc-toolkit/core";
 import i18next from "i18next";
 import * as fs from "node:fs";
 import type { DefaultTheme } from "vitepress/theme";
-import { type DocLocaleResources, i18nDocInit, i18nextDocT } from "./locale/i18n.js";
+import { type DocLocaleResources, i18nDocInit, i18nextDoc } from "./locale/i18n.js";
 import { VERSION } from "./version.js";
 
 /**
@@ -161,7 +161,7 @@ class DocumentationGenerator extends Generator {
         for (const locale of this.locales) {
             this.#documentationResources.push({
                 locale,
-                ...i18nextDocT("Documentation", {
+                ...i18nextDoc.t("Documentation", {
                     lng: locale,
                     returnObjects: true
                 })
@@ -461,6 +461,6 @@ const generator = new DocumentationGenerator();
 i18nDocInit(i18next.use(i18nCoreCLILanguageDetector)).then(async () =>
     generator.generate()
 ).catch((e: unknown) => {
-    generator.logger.error("Generator failed", e);
+    generator.logger.error(e);
     process.exit(1);
 });
