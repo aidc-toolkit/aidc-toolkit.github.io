@@ -1,6 +1,7 @@
 import { type ClassDescriptor, type MethodDescriptor, Multiplicities } from "@aidc-toolkit/app-extension";
 import { type FunctionLocalization, Generator } from "@aidc-toolkit/app-extension/generator";
-import { I18nLanguageDetectors } from "@aidc-toolkit/core";
+import { i18nCoreCLILanguageDetector } from "@aidc-toolkit/core";
+import i18next from "i18next";
 import * as fs from "node:fs";
 import type { DefaultTheme } from "vitepress/theme";
 import { type DocLocaleResources, i18nDocInit, i18nextDoc } from "./locale/i18n.js";
@@ -243,7 +244,7 @@ class DocumentationGenerator extends Generator {
                 functionLocalizationsMap
             });
 
-            let googleSheetsFunctionName: string | undefined = undefined;
+            let googleSheetsFunctionName;
 
             // Localize functions documentation.
             for (const documentationResource of this.#documentationResources) {
@@ -284,7 +285,7 @@ class DocumentationGenerator extends Generator {
                 let anyOptional = false;
                 let anyArrayParameter = false;
                 let anyMatrixParameter = false;
-                let drivingParameterName: string | undefined = undefined;
+                let drivingParameterName: string | undefined;
 
                 if (methodDescriptor.parameterDescriptors.length !== 0) {
                     functionLines.push(
@@ -369,12 +370,11 @@ class DocumentationGenerator extends Generator {
                         );
                     }
 
-                    let functionReturns: string | undefined = undefined;
+                    let functionReturns;
 
                     if (methodDescriptor.multiplicity === Multiplicities.Array) {
                         functionReturns = documentationResource.functionReturnsArray;
                     } else if (methodDescriptor.multiplicity === Multiplicities.Matrix) {
-                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
                         if (drivingParameterName === undefined) {
                             functionReturns = documentationResource.functionReturnsMatrix;
                         } else {
@@ -458,7 +458,7 @@ class DocumentationGenerator extends Generator {
 
 const generator = new DocumentationGenerator();
 
-i18nDocInit(I18nLanguageDetectors.CLI).then(async () =>
+i18nDocInit(i18next.use(i18nCoreCLILanguageDetector)).then(async () =>
     generator.generate()
 ).catch((e: unknown) => {
     generator.logger.error(e);

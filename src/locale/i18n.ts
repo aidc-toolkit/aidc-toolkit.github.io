@@ -1,36 +1,58 @@
 import { i18nAppExtensionInit } from "@aidc-toolkit/app-extension";
-import { i18nCoreInit, i18nInit, type I18nLanguageDetector } from "@aidc-toolkit/core";
-import i18next, { type i18n, type Resource } from "i18next";
+import { i18nCoreInit, i18nInit } from "@aidc-toolkit/core";
+import type { i18n, ParseKeys, Resource, TFunction } from "i18next";
 import enLocaleResources from "./en/locale-resources.js";
 import frLocaleResources from "./fr/locale-resources.js";
 
 export const docNS = "aidct_doc";
 
 /**
- * Locale strings type is extracted from the English locale strings object.
+ * Locale resources type is extracted from the English locale resources object.
  */
 export type DocLocaleResources = typeof enLocaleResources;
+
+/**
+ * Core locale resources augmentation.
+ */
+declare module "@aidc-toolkit/core" {
+    /**
+     * Internationalization locale resources.
+     */
+    export interface I18nLocaleResources {
+        /**
+         * Documentation locale resources.
+         */
+        [docNS]: DocLocaleResources;
+    }
+}
+
+/**
+ * Documentation parse keys.
+ */
+export type DocParseKeys = ParseKeys<typeof docNS>;
 
 /**
  * Documentation resource bundle.
  */
 export const docResourceBundle: Resource = {
     en: {
-        aidct_doc: enLocaleResources
+        [docNS]: enLocaleResources
     },
     fr: {
-        aidct_doc: frLocaleResources
+        [docNS]: frLocaleResources
     }
 };
 
-// Explicit type is necessary because type can't be inferred without additional references.
-export const i18nextDoc: i18n = i18next.createInstance();
+/**
+ * Documentation i18next translator function.
+ */
+export let i18nextDocT: TFunction<typeof docNS>;
 
 /**
  * Initialize internationalization.
  *
- * @param languageDetector
- * Language detector.
+ * @param i18next
+ * Internationalization instance.
  *
  * @param debug
  * Debug setting.
@@ -38,6 +60,9 @@ export const i18nextDoc: i18n = i18next.createInstance();
  * @returns
  * Documentation resource bundle.
  */
-export async function i18nDocInit(languageDetector: I18nLanguageDetector, debug = false): Promise<Resource> {
-    return i18nInit(i18nextDoc, languageDetector, debug, docNS, docResourceBundle, i18nCoreInit, i18nAppExtensionInit);
+export async function i18nDocInit(i18next: i18n, debug = false): Promise<Resource> {
+    // Bind translator function to i18next.
+    i18nextDocT = i18next.getFixedT(null, docNS);
+
+    return i18nInit(i18next, debug, docResourceBundle, i18nCoreInit, i18nAppExtensionInit);
 }

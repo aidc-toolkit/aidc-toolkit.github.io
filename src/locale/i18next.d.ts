@@ -1,20 +1,16 @@
-import type { CoreLocaleResources } from "@aidc-toolkit/core";
-import type { AppExtensionLocaleResources } from "@aidc-toolkit/app-extension";
-import type { DocLocaleResources } from "./i18n.js";
+import type { I18nLocaleResources } from "@aidc-toolkit/core";
 
 /**
- * Internationalization module.
+ * Internationalization module augmentation.
  */
 declare module "i18next" {
     /**
      * Custom type options for this package.
      */
     interface CustomTypeOptions {
-        defaultNS: "aidct_doc";
-        resources: {
-            aidct_core: CoreLocaleResources;
-            aidct_app_extension: AppExtensionLocaleResources;
-            aidct_doc: DocLocaleResources;
-        };
+        /**
+         * Resources override.
+         */
+        resources: I18nLocaleResources;
     }
 }
