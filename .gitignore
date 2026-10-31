@@ -1,5 +1,5 @@
 /**/.DS_Store
-/.npmrc
+/.npm*
 /node_modules/
 /.vitepress/cache/
 /.vitepress/dist/
