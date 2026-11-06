@@ -294,7 +294,9 @@ class DocumentationGenerator extends Generator {
                         ""
                     );
 
-                    const parametersDocumentation: ParameterDocumentation[] = methodDescriptor.parameterDescriptors.map((parameterDescriptor) => {
+                    const parametersDocumentation = new Array<ParameterDocumentation>();
+
+                    for (const parameterDescriptor of methodDescriptor.parameterDescriptors) {
                         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- Guaranteed by Generator class.
                         const parameterLocalization = functionLocalization.parametersMap.get(parameterDescriptor.name)!;
 
@@ -326,12 +328,12 @@ class DocumentationGenerator extends Generator {
 
                         const nameMarkup = parameterDescriptor.isRequired ? "" : "*";
 
-                        return {
+                        parametersDocumentation.push({
                             name: `${nameMarkup}${parameterName}${nameMarkup}${parameterNameSuffix}`,
                             description: parameterLocalization.description,
                             type: documentationResource.types[parameterDescriptor.type]
-                        };
-                    });
+                        });
+                    }
 
                     const maximumNameLength = Math.max(documentationResource.name.length, ...parametersDocumentation.map(parameterDocumentation => parameterDocumentation.name.length));
                     const maximumTypeLength = Math.max(documentationResource.type.length, ...parametersDocumentation.map(parameterDocumentation => parameterDocumentation.type.length));
@@ -346,7 +348,6 @@ class DocumentationGenerator extends Generator {
                         functionLines.push(`| ${parameterDocumentation.name.padEnd(maximumNameLength)} | ${parameterDocumentation.type.padEnd(maximumTypeLength)} | ${parameterDocumentation.description.padEnd(maximumDescriptionLength)} |`);
                     }
 
-                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
                     if (anyOptional) {
                         functionLines.push(
                             "",
@@ -354,7 +355,6 @@ class DocumentationGenerator extends Generator {
                         );
                     }
 
-                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
                     if (anyArrayParameter) {
                         functionLines.push(
                             "",
@@ -362,7 +362,6 @@ class DocumentationGenerator extends Generator {
                         );
                     }
 
-                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
                     if (anyMatrixParameter) {
                         functionLines.push(
                             "",
@@ -378,7 +377,6 @@ class DocumentationGenerator extends Generator {
                         if (drivingParameterName === undefined) {
                             functionReturns = documentationResource.functionReturnsMatrix;
                         } else {
-                            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- Value is modified in callback.
                             functionReturns = (!anyMatrixParameter ? documentationResource.functionReturnsArrayMatrix : documentationResource.functionReturnsMatrixMatrix).replaceAll("{{drivingParameterName}}", drivingParameterName);
                         }
                     }
