@@ -115,7 +115,7 @@ class DocumentationGenerator extends Generator {
      * Get the path of a locale, optional namespace, and optional file name.
      *
      * @param relative
-     * If true, path is relative. Absolute is for web path generation.
+     * True if path is relative. Absolute is for web path generation.
      *
      * @param locale
      * Locale. If the default, ignored in the construction of the path.
