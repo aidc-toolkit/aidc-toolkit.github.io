@@ -44,7 +44,7 @@ export const docResourceBundle: Resource = {
     fr: {
         [docNS]: frLocaleResources
     }
-};
+} as const;
 
 /**
  * Documentation i18next translator function.
