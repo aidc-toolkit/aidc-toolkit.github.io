@@ -382,10 +382,7 @@ class DocumentationGenerator extends Generator {
                     }
 
                     if (functionReturns !== undefined) {
-                        functionLines.splice(functionReturnsIndex, 0, "",
-                            "",
-                            functionReturns
-                        );
+                        functionLines.splice(functionReturnsIndex, 0, "", "", functionReturns);
                     }
                 }
 
@@ -456,8 +453,8 @@ class DocumentationGenerator extends Generator {
 
 const generator = new DocumentationGenerator();
 
-i18nDocInit(i18next.use(i18nCoreCLILanguageDetector)).then(async () =>
-    generator.generate()
+i18nDocInit(i18next.use(i18nCoreCLILanguageDetector)).then(
+    async () => generator.generate()
 ).catch((e: unknown) => {
     generator.logger.error("Generator failed", e);
     process.exit(1);

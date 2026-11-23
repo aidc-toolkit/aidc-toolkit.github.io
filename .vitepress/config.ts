@@ -41,8 +41,8 @@ function rewriteSidebar<TSidebar extends DefaultTheme.Sidebar>(sidebar: TSidebar
                 return rewrittenSidebarItem;
             });
         } else {
-            rewrittenSidebar = Object.fromEntries(Object.entries(sidebar).map(([key, multiEntry]) =>
-                [key, Array.isArray(multiEntry) ?
+            rewrittenSidebar = Object.fromEntries(Object.entries(sidebar).map(
+                ([key, multiEntry]) => [key, Array.isArray(multiEntry) ?
                     rewriteSidebar(multiEntry) :
                     {
                         base: `${productionPath}${multiEntry.base}`,
